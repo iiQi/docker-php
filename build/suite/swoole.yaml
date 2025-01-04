@@ -1,0 +1,93 @@
+debian:
+  from: cli
+  # 编译依赖
+  deps:
+    - libcurl4-openssl-dev
+    - libfreetype6-dev
+    - libgmp-dev
+    - libgrpc-dev
+    - libgrpc++-dev
+    - librabbitmq-dev
+    - libpng-dev
+    - libwebp-dev
+    - libxml2-dev
+    - libzip-dev
+    - protobuf-compiler-grpc
+  # 系统软件
+  package:
+    - unzip
+  # 开发工具包
+  dev:
+    - bash-completion
+    - bind9
+    - dnsutils
+    - git
+    - iputils-ping
+    - net-tools
+    - netcat-traditional
+    - procps
+    - telnet
+    - traceroute
+alpine:
+  from: cli-alpine
+  deps:
+    - build-base
+    - curl-dev
+    - freetype-dev
+    - gettext-dev
+    - gmp-dev
+    - grpc-dev
+    - jpeg-dev
+    - libpng-dev
+    - libwebp-dev
+    - libxml2-dev
+    - libzip-dev
+    - protobuf-c-compiler
+    - rabbitmq-c-dev
+    - shadow
+  package:
+    - unzip
+  # 开发工具包
+  dev:
+    - bash-completion
+    - bind
+    - git
+    - inetutils-telnet
+    - iputils
+    - net-tools
+    - netcat-openbsd
+    - procps-ng
+    - traceroute
+php:
+  version: 8.4.2
+  cmd: php
+  ext:
+    - name: gd
+      deps: |
+        cd /usr/src
+        dir=/usr/src/jpegsrc
+        curl -fsSL -o jpegsrc.tar.gz http://www.ijg.org/files/jpegsrc.v9f.tar.gz
+        mkdir -p "$dir"
+        tar -zxf jpegsrc.tar.gz -C "$dir" --strip-components=1
+        rm jpegsrc.tar.gz
+        cd "$dir"
+        CFLAGS="-O3 -fPIC" ./configure
+        make && make install
+        rm -rf "$dir"
+        docker-php-ext-configure gd --with-jpeg --with-freetype --with-webp
+    - name: bcmath
+      deps: pwd
+    - curl
+    - gettext
+    - gmp
+    - pcntl
+    - pdo_mysql
+    - sockets
+    - zip
+  pecl:
+    - amqp
+    - redis
+    - msgpack
+    - protobuf
+    - name: swoole
+      arg: yes\nyes\nyes\nyes\nyes\nyes\n
