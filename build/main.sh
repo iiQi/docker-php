@@ -42,18 +42,9 @@ $yqBin '.php.pecl.[] | select(has("arg")) | [.name, .arg] | @tsv' "$configFile" 
   [ -z "$name" ] || install_pecl "$name" "$arg"
 done
 
-phpPECL=$($yqBin '.php.pecl.[] | select(.name) | .name, .php.pecl.[] | select(kind == "scalar")' "$configFile")
-[ -z "$phpPECL" ] || docker-php-ext-enable $phpPECL
-
-#清理pecl
-rm -rf /usr/local/lib/php/.channels/* /usr/local/lib/php/doc/* /usr/local/lib/php/test/*
-
-# 清理编译依赖
-clearDeps "$savedMark"
-
 groupadd -g 1000 www
 useradd -g 1000 -u 1000 -b /var -s /bin/bash www
 cp /usr/local/etc/php/php.ini-production /usr/local/etc/php/php.ini
-chmod a+w /usr/local/etc/php/conf.d/*
-chmod a+w /usr/local/etc/php-fpm.d/*
-chmod +x /usr/local/bin/*
+
+# 清理编译依赖
+clearDeps "$savedMark"
