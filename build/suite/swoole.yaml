@@ -75,8 +75,7 @@ php:
         make && make install
         rm -rf "$dir"
         docker-php-ext-configure gd --with-jpeg --with-freetype --with-webp
-    - name: bcmath
-      deps: pwd
+    - bcmath
     - curl
     - gettext
     - gmp
