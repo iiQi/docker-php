@@ -11,10 +11,11 @@ deps=$($yqBin ".$distro.deps | join(\" \")" "$configFile")
 package=$($yqBin ".$distro.package | join(\" \")" "$configFile")
 
 install_pecl() {
-  package=$1
+  name=$1
   arg=$2
 
-  printf "%b" "$arg" | pecl install -o "$package";
+  printf "%b" "$arg" | pecl install "$name"
+  docker-php-ext-enable "$name"
 }
 
 . "distro/$distro.sh"
@@ -35,16 +36,10 @@ phpExt=$($yqBin '.php.ext.[] | select(.name) | .name, .php.ext.[] | select(kind 
 [ -z "$phpExt" ] || docker-php-ext-install -j"$(nproc)" $phpExt
 
 # PECL
-phpPECL=$($yqBin '.php.pecl.[] | select(kind == "scalar")' "$configFile")
-[ -z "$phpPECL" ] || pecl install -o $phpPECL
-
-# 带选项参数的 PECL
-$yqBin '.php.pecl.[] | select(has("arg")) | [.name, .arg] | @tsv' "$configFile" | while IFS="$(printf '\t')" read -r name arg; do
-  [ -z "$name" ] || install_pecl "$name" "$arg"
-done
-
-phpPECL=$($yqBin '.php.pecl.[] | select(.name) | .name, .php.pecl.[] | select(kind == "scalar")' "$configFile")
-[ -z "$phpPECL" ] || docker-php-ext-enable $phpPECL
+$yqBin '.php.pecl[] | with( select(type == "!!str"); . = {"name": ., "arg": ""} ) | [.name, .arg] | @csv' "$configFile" | \
+  while IFS="," read -r name arg; do
+    install_pecl "$name" "$arg"
+  done
 
 #清理pecl
 rm -rf /usr/local/lib/php/.channels/* /usr/local/lib/php/doc/* /usr/local/lib/php/test/* /tmp/pear

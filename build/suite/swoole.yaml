@@ -46,6 +46,7 @@ alpine:
     - rabbitmq-c-dev
     - shadow
   package:
+    - bash
     - unzip
   # 开发工具包
   dev:

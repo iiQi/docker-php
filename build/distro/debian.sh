@@ -1,8 +1,9 @@
-#!/usr/bin/env bash
+#!/usr/bin/env sh
 
 changeRepo() {
   sed -i 's#http://deb.debian.org#https://mirrors.aliyun.com#g' /etc/apt/sources.list.d/debian.sources
-  sed -i 's/^# \(export\|alias\)/\1/g' /root/.bashrc
+
+  apt-get update
 }
 
 savedMark() {
@@ -10,15 +11,17 @@ savedMark() {
 }
 
 installDeps() {
-  deps=$*
+  [ -z "$*" ] || apt-get install -y --no-install-recommends "$@"
+}
 
-  [ -z "$deps" ] || apt-get update && apt-get install -y --no-install-recommends $deps
+installPackage() {
+  [ -z "$*" ] || apt-get install -y --no-install-recommends "$@"
+  sed -i 's/^# \(export\|alias\)/\1/g' /root/.bashrc
 }
 
 clearDeps() {
-  savedAptMark=$*
   apt-mark auto '.*' > /dev/null
-  [ -z "$savedAptMark" ] || apt-mark manual $savedAptMark
+  [ -z "$*" ] || apt-mark manual "$@"
 
   find /usr/local -type f -name '*.so' -exec ldd '{}' ';' \
     | awk '/=>/ { so = $(NF-1); if (index(so, "/usr/local/") == 1) { next }; gsub("^/(usr/)?", "", so); printf "*%s\n", so }' \
@@ -30,7 +33,8 @@ clearDeps() {
   ;
 
   apt-get purge -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false
+}
 
+clearCache() {
   rm -rf /var/lib/apt/lists/*
-  rm -rf /tmp/pear
 }
