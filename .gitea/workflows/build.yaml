@@ -1,0 +1,62 @@
+name: Build Docker Image
+on: [push]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        distro:
+          - debian
+        suite:
+          - swoole
+    steps:
+      - name: Check out repository code
+        uses: actions/checkout@v3
+      - name: docker
+        uses: docker/login-action@v3
+        with:
+          registry: registry.aliyuncs.com
+          username: ${{ secrets.ALIYUNCS_USERNAME }}
+          password: ${{ secrets.ALIYUNCS_PASSWORD }}
+
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v3
+
+      - name: Set up Docker BuildX
+        uses: docker/setup-buildx-action@v3
+        with:
+          buildkitd-flags: --debug
+
+      - name: Get config
+        id: config
+        uses: https://github.com/mikefarah/yq@master
+        with:
+          cmd: |
+            distro="${{ matrix.distro }}"
+            configFile="build/suite/${{ matrix.suite }}.yaml"
+            echo from=$(yq "select(.$distro.from) | .$distro.from" "$configFile") >> $GITHUB_OUTPUT
+            echo version=$(yq ".php.version" "$configFile") >> $GITHUB_OUTPUT
+            echo cmd=$(yq ".php.cmd" "$configFile") >> $GITHUB_OUTPUT
+
+      - name: Build and push
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: Dockerfile
+          platforms: |
+            linux/amd64
+            linux/arm64
+          pull: true
+          push: true
+          no-cache: true
+          build-args: |
+            DISTRO=${{ matrix.distro }}
+            SUITE=${{ matrix.suite }}
+            FROM=${{ steps.config.outputs.from }}
+            PHP_VER=${{ steps.config.outputs.version }}
+            PHP_CMD=${{ steps.config.outputs.cmd }}
+
+          tags: |
+            $REGISTRY/php:${{ steps.config.outputs.version }}-${{ matrix.suite }}
