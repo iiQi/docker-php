@@ -21,13 +21,13 @@ jobs:
           username: ${{ secrets.ALIYUNCS_USERNAME }}
           password: ${{ secrets.ALIYUNCS_PASSWORD }}
 
-      - name: Set up QEMU
-        uses: docker/setup-qemu-action@v3
-
-      - name: Set up Docker BuildX
-        uses: docker/setup-buildx-action@v3
-        with:
-          buildkitd-flags: --debug
+#      - name: Set up QEMU
+#        uses: docker/setup-qemu-action@v3
+#
+#      - name: Set up Docker BuildX
+#        uses: docker/setup-buildx-action@v3
+#        with:
+#          buildkitd-flags: --debug
 
       - name: Get config
         id: config
@@ -47,7 +47,7 @@ jobs:
           file: Dockerfile
           platforms: |
             linux/amd64
-            linux/arm64
+#            linux/arm64
           pull: true
           push: true
           no-cache: true
