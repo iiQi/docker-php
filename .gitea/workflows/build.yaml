@@ -39,6 +39,14 @@ jobs:
             echo from=$(yq "select(.$distro.from) | .$distro.from" "$configFile") >> $GITHUB_OUTPUT
             echo version=$(yq ".php.version" "$configFile") >> $GITHUB_OUTPUT
             echo cmd=$(yq ".php.cmd" "$configFile") >> $GITHUB_OUTPUT
+      - name: test
+        run: |
+          echo ${{ steps.config.outputs.from }}
+          echo ${{ steps.config.outputs.version }}
+          echo ${{ steps.config.outputs.cmd }}
+          type yq
+          pwd
+          ls -l ./
 
       - name: Build and push
         uses: docker/build-push-action@v6
