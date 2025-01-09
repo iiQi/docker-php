@@ -6,7 +6,7 @@ distro=$1
 suite=$2
 
 configFile="suite/$suite.yaml"
-yqBin="yq"
+yqBin="./yq"
 deps=$($yqBin ".$distro.deps | join(\" \")" "$configFile")
 package=$($yqBin ".$distro.package | join(\" \")" "$configFile")
 
