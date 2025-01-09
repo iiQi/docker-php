@@ -69,4 +69,4 @@ jobs:
             PHP_CMD=${{ steps.config.outputs.cmd }}
 
           tags: |
-            registry.aliyuncs.com/php:${{ steps.config.outputs.version }}-${{ matrix.suite }}
+            registry.aliyuncs.com/iiqi/php:${{ steps.config.outputs.version }}-${{ matrix.suite }}
