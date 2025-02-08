@@ -1,0 +1,96 @@
+amqp:
+  type: pecl
+  deps:
+    debian:
+      - librabbitmq-dev
+    alpine:
+      - rabbitmq-c-dev
+bcmath:
+  type: builtin
+curl:
+  type: builtin
+  deps:
+    debian:
+      - libcurl4-openssl-dev
+    alpine:
+      - curl-dev
+gd:
+  type: builtin
+  option:
+    - with-freetype
+    - with-jpeg
+    - with-webp
+  deps:
+    debian:
+      - libfreetype6-dev
+      - libpng-dev
+      - libavif-dev
+      - libjpeg-dev
+      - libwebp-dev
+    alpine:
+      - freetype-dev
+      - jpeg-dev
+      - libpng-dev
+      - libwebp-dev
+      - libavif-dev
+gettext:
+  type: builtin
+  deps:
+    alpine:
+      - gettext-dev
+gmp:
+  type: builtin
+  deps:
+    debian:
+      - libgmp-dev
+    alpine:
+      - gmp-dev
+msgpack:
+  type: pecl
+pcntl:
+  type: builtin
+pdo_mysql:
+  type: builtin
+protobuf:
+  type: pecl
+  deps:
+    debian:
+      - libgrpc-dev
+      - libgrpc++-dev
+      - protobuf-compiler-grpc
+    alpine:
+      - grpc-dev
+      - protobuf-c-compiler
+redis:
+  type: pecl
+sockets:
+  type: builtin
+  deps:
+    alpine:
+      - linux-headers
+zip:
+  type: builtin
+  deps:
+    debian:
+      - libzip-dev
+    alpine:
+      - libzip-dev
+swoole:
+  type: pecl
+  arg: yes\nyes\nyes\nyes\nyes\nyes\n
+  needs:
+    - curl
+    - pdo_mysql
+    - sockets
+  deps:
+    debian:
+      - libbrotli-dev
+      - libc-ares-dev
+      - libssl-dev
+      - libpq-dev
+      - libsqlite3-dev
+      - libzstd-dev
+      - liburing-dev
+    alpine:
+      -
+

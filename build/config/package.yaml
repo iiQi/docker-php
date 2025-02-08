@@ -1,0 +1,50 @@
+debian:
+  # 编译工具包
+  build:
+
+  # 常用工具包
+  package:
+    - unzip
+    - run: |
+        sed -i 's/^# \(export\|alias\)/\1/g' /root/.bashrc
+
+  # 开发工具包
+  dev:
+    - bash-completion
+    - bind9
+    - dnsutils
+    - git
+    - iputils-ping
+    - net-tools
+    - netcat-traditional
+    - procps
+    - telnet
+    - traceroute
+alpine:
+  # 编译工具包
+  build:
+    - build-base
+    - shadow
+
+  # 常用工具包
+  package:
+    - bash
+    - run: |
+        cat << EOF > /root/.bashrc
+        export LS_OPTIONS='--color=auto'
+        alias ls='ls \$LS_OPTIONS'
+        alias ll='ls \$LS_OPTIONS -l'
+        alias l='ls \$LS_OPTIONS -l'
+        EOF
+
+  # 开发工具包
+  dev:
+    - bash-completion
+    - bind
+    - git
+    - inetutils-telnet
+    - iputils
+    - net-tools
+    - netcat-openbsd
+    - procps-ng
+    - traceroute

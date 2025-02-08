@@ -1,0 +1,43 @@
+#!/usr/bin/env bash
+set -e
+
+REPLACE_INI_FILES=${REPLACE_INI_FILES:-"/usr/local/etc/php/conf.d/php.ini,/usr/local/etc/php-fpm.d/zz-www.conf"}
+
+if [ -f /root/crontab ]; then
+  crontab -  < /root/crontab
+  cron
+fi
+
+replaceINI()
+{
+  file=$1
+  if [ ! -f "$file" ]; then
+    return
+  fi
+
+  grep -Eo '\$\{(TZ|PHP_|FPM_)[^\}]*\}' "$file" | while IFS= read -r line; do
+    IFS=':' read -r key val <<< "${line:2:-1}"
+    val=${!key:-$val}
+
+    if [ -n "$val" ]; then
+      sed -i "s#;*\([^\#]*\)$line#\1$val#g" "$file"
+    fi
+  done
+}
+
+if [ -n "$REPLACE_INI_FILES" ]; then
+  IFS=',' read -r -a array <<< "$REPLACE_INI_FILES"
+  for item in "${array[@]}"; do
+    replaceINI "$item"
+  done
+fi
+
+if [ "${1#-}" != "$1" ] || [ "$1" = "" ]; then
+  set -- "$PHP_CMD" "$@"
+fi
+
+if [ -n "$ON_START" ]; then
+  bash -ec "$ON_START"
+fi
+
+exec "$@"

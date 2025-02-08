@@ -1,0 +1,45 @@
+default:
+  fpm:
+    from:
+      debian: fpm
+      alpine: fpm-alpine
+    cmd: php-fpm
+    ext:
+      - gd
+      - bcmath
+      - curl
+      - gettext
+      - gmp
+      - pcntl
+      - pdo_mysql
+      - sockets
+      - zip
+      - amqp
+      - redis
+      - msgpack
+  swoole:
+    from:
+      debian: cli
+      alpine: cli-alpine
+    cmd: php
+    ext:
+      - gd
+      - bcmath
+      - curl
+      - gettext
+      - gmp
+      - pcntl
+      - pdo_mysql
+      - sockets
+      - zip
+      - amqp
+      - redis
+      - msgpack
+      - protobuf
+      - name: swoole
+        arg: yes\nyes\nyes\nyes\nyes\nyes\n
+8.0:
+8.1:
+8.2:
+8.3:
+8.4:
