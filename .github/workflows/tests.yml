@@ -66,6 +66,8 @@ jobs:
           
           echo from=$(yq ".default.[env(SUITE)] * .[env(VERSION)].[env(SUITE)] | .from.[env(DISTRO)]" "$SUITE_CONFIG") >> $GITHUB_OUTPUT
           echo cmd=$(yq ".default.[env(SUITE)] * .[env(VERSION)].[env(SUITE)] | .cmd" "$SUITE_CONFIG") >> $GITHUB_OUTPUT
+          
+          cp /usr/bin/yq ./build/
       - name: Print Config
         shell: bash
         run: |
