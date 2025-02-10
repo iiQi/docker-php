@@ -86,7 +86,7 @@ jobs:
           build-args: |
             DISTRO=${{ matrix.distro }}
             SUITE=${{ matrix.suite }}
-            PHP_VER=${{ matrix.version }}
+            VERSION=${{ matrix.version }}
             PHP_EXT=${{ matrix.ext }}
             PHP_CMD=${{ steps.config.outputs.cmd }}
             FROM=${{ steps.config.outputs.from }}
