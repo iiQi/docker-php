@@ -1,0 +1,93 @@
+name: tests
+
+on:
+  push:
+  workflow_dispatch:
+
+env:
+  EXT_CONFIG: build/config/ext.yaml
+  SUITE_CONFIG: build/config/suite.yaml
+
+jobs:
+  init:
+    name: Query Config
+    runs-on: "ubuntu-latest"
+    outputs:
+      config: ${{ steps.query-config.outputs.config }}
+    steps:
+      - name: Check out repository code
+        uses: actions/checkout@v3
+      - name: Set yq
+        uses: mikefarah/yq@master
+        with:
+          cmd: ''
+      - name: Query Config
+        id: query-config
+        shell: bash
+        run: |
+          ver='8.3'
+          version='[]'
+          while IFS= read -r line; do
+            item=$(curl -sfSL "https://www.php.net/releases/?json&max=1&version=$line" | yq -pj -oy 'keys | .[]')
+            version=$(printf "%s" "$version" | item=$item yq '. *+ [env(item)] | @json')
+          done <<< "$ver"
+          
+          export version
+          
+          config=$(yq '. = {"distro": ["debian", "alpine"], "suite": ["swoole"], "version": env(version), "ext": (. | keys() *+ [""])} | @json' "$EXT_CONFIG")
+          
+          echo config=$config >> $GITHUB_OUTPUT
+
+  tests:
+    name: Build PHP ${{ matrix.version }}-${{ matrix.suite }}-${{ matrix.distro }}(${{ matrix.ext }})
+    runs-on: "ubuntu-latest"
+    needs:
+      - init
+    strategy:
+      matrix: ${{ fromJSON(needs.init.outputs.config) }}
+      max-parallel: 3
+      fail-fast: false
+    steps:
+      - name: Check out repository code
+        uses: actions/checkout@v3
+      - name: Set yq
+        uses: mikefarah/yq@master
+        with:
+          cmd: ''
+      - name: Config
+        id: config
+        shell: bash
+        run: |
+          DISTRO=${{ matrix.distro }}
+          SUITE=${{ matrix.suite }}
+          VERSION=${{ matrix.version }}
+          
+          export DISTRO SUITE VERSION
+          
+          echo from=$(yq ".default.[env(SUITE)] * .[env(VERSION)].[env(SUITE)] | .from.[env(DISTRO)]" "$SUITE_CONFIG") >> $GITHUB_OUTPUT
+          echo cmd=$(yq ".default.[env(SUITE)] * .[env(VERSION)].[env(SUITE)] | .cmd" "$SUITE_CONFIG") >> $GITHUB_OUTPUT
+      - name: Print Config
+        shell: bash
+        run: |
+          echo "distro: ${{ matrix.distro }}"
+          echo "suite: ${{ matrix.suite }}"
+          echo "version: ${{ matrix.version }}"
+          echo "cmd: ${{ steps.config.outputs.cmd }}"
+          echo "from: ${{ steps.config.outputs.from }}"
+      - name: Build Test
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: Dockerfile
+          platforms: |
+            linux/amd64
+          build-args: |
+            DISTRO=${{ matrix.distro }}
+            SUITE=${{ matrix.suite }}
+            PHP_VER=${{ matrix.version }}
+            PHP_EXT=${{ matrix.ext }}
+            PHP_CMD=${{ steps.config.outputs.cmd }}
+            FROM=${{ steps.config.outputs.from }}
+
+          tags: |
+            iiqi/php:${{ matrix.version }}-${{ matrix.suite }}-${{ matrix.distro }}-${{ matrix.ext }}
