@@ -1,7 +1,14 @@
 #!/usr/bin/env sh
 
 changeRepo() {
-  sed -i 's#http://deb.debian.org#https://mirrors.aliyun.com#g' /etc/apt/sources.list.d/debian.sources
+  # bookworm
+  if [ -f /etc/apt/sources.list.d/debian.sources ]; then
+    sed -i 's#http://deb.debian.org#https://mirrors.aliyun.com#g' /etc/apt/sources.list.d/debian.sources
+
+  # bullseye
+  elif [ -f /etc/apt/sources.list ]; then
+    sed -i 's#http://deb.debian.org#https://mirrors.aliyun.com#g' /etc/apt/sources.list
+  fi
 
   apt-get update
 }
