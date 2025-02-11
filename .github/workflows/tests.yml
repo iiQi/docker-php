@@ -13,6 +13,7 @@ jobs:
   init:
     name: Query Config
     runs-on: "ubuntu-latest"
+    if: ${{ vars.DISABLE_TESTS != 'true' }}
     outputs:
       config: ${{ steps.query-config.outputs.config }}
     steps:
@@ -42,6 +43,7 @@ jobs:
   tests:
     name: Build PHP ${{ matrix.version }}-${{ matrix.suite }}-${{ matrix.distro }}(${{ matrix.ext }})
     runs-on: "ubuntu-latest"
+    if: ${{ vars.DISABLE_TESTS != 'true' }}
     needs:
       - init
     strategy:
