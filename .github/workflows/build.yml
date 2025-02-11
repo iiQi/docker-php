@@ -1,0 +1,149 @@
+name: build
+
+on:
+  schedule:
+    - cron: 30 23 * * *
+  push:
+  workflow_dispatch:
+
+env:
+  EXT_CONFIG: build/config/ext.yaml
+  SUITE_CONFIG: build/config/suite.yaml
+
+jobs:
+  init:
+    name: Query Config
+    runs-on: "ubuntu-latest"
+    outputs:
+      config: ${{ steps.query-config.outputs.config }}
+    steps:
+      - name: Check out repository code
+        uses: actions/checkout@v3
+      - name: Set yq
+        uses: mikefarah/yq@master
+        with:
+          cmd: ''
+      - name: Query Config
+        id: query-config
+        shell: bash
+        run: |
+          ver=$(yq 'keys() | filter(.!= "default") |.[]' "$SUITE_CONFIG")
+          version='[]'
+          while IFS= read -r line; do
+            dot_count=$(grep -o "\." <<< "$line" | wc -l)
+
+            if [ "$dot_count" -eq 2 ]; then
+              item=$line
+            else
+              item=$(curl -sfSL "https://www.php.net/releases/?json&max=1&version=$line" | yq -pj -oy 'keys | .[]')
+            fi
+          
+            version=$(printf "%s" "$version" | item=$item yq '. *+ [env(item)] | @json')
+          done <<< "$ver"
+          
+          export version
+          
+          config=$(yq '. = {"distro": ["debian", "alpine"], "suite": (.default | keys()), "version": env(version)} | @json' "$SUITE_CONFIG")
+          
+          echo config=$config >> $GITHUB_OUTPUT
+
+  build:
+    name: Build PHP ${{ matrix.version }}-${{ matrix.suite }}-${{ matrix.distro }}
+    runs-on: "ubuntu-latest"
+    needs:
+      - init
+    strategy:
+      matrix: ${{ fromJSON(needs.init.outputs.config) }}
+      max-parallel: 3
+      fail-fast: false
+    steps:
+      - name: Check out repository code
+        uses: actions/checkout@v3
+      - name: Set yq
+        uses: mikefarah/yq@master
+        with:
+          cmd: ''
+
+      - name: Config
+        id: config
+        shell: bash
+        working-directory: build
+        run: |
+          DISTRO=${{ matrix.distro }}
+          SUITE=${{ matrix.suite }}
+          VERSION=${{ matrix.version }}
+          export YQ='/usr/bin/yq'
+
+          . build.sh
+
+          echo from=$(get_suite | yq '.from.[env(DISTRO)]') >> $GITHUB_OUTPUT
+          echo cmd=$(get_suite | yq '.cmd') >> $GITHUB_OUTPUT
+          
+          tag_suffix=${SUITE:+-$SUITE}
+  
+          if [ "$DISTRO" != "debian" ]; then
+            tag_suffix=${tag_suffix}-${DISTRO}
+          fi
+          
+          echo tag_suffix=${tag_suffix} >> $GITHUB_OUTPUT
+          echo minor_version=${MINOR_VERSION} >> $GITHUB_OUTPUT
+          
+          cp /usr/bin/yq ./
+
+      - name: Print Config
+        shell: bash
+        run: |
+          echo "distro: ${{ matrix.distro }}"
+          echo "suite: ${{ matrix.suite }}"
+          echo "version: ${{ matrix.version }}"
+          echo "cmd: ${{ steps.config.outputs.cmd }}"
+          echo "from: ${{ steps.config.outputs.from }}"
+          echo "tag_suffix: ${{ steps.config.outputs.tag_suffix }}"
+          echo "minor_version: ${{ steps.config.outputs.minor_version }}"
+
+      - name: Docker login aliyuncs
+        uses: docker/login-action@v3
+        with:
+          registry: registry.aliyuncs.com
+          username: ${{ secrets.ALIYUNCS_USERNAME }}
+          password: ${{ secrets.ALIYUNCS_PASSWORD }}
+
+      - name: Docker login dockerhub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v3
+
+      - name: Set up Docker BuildX
+        uses: docker/setup-buildx-action@v3
+        with:
+          buildkitd-flags: --debug
+
+      - name: Build
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: Dockerfile
+          platforms: linux/amd64
+          pull: true
+          push: true
+          build-args: |
+            DISTRO=${{ matrix.distro }}
+            SUITE=${{ matrix.suite }}
+            VERSION=${{ matrix.version }}
+            PHP_EXT=${{ matrix.ext }}
+            PHP_CMD=${{ steps.config.outputs.cmd }}
+            FROM=${{ steps.config.outputs.from }}
+
+          tags: |
+            ${{ vars.ALIYUNCS_REGISTRY }}/php:${{ matrix.version }}${{ steps.config.outputs.tag_suffix }}
+            ${{ vars.ALIYUNCS_REGISTRY }}/php:${{ steps.config.outputs.minor_version }}${{ steps.config.outputs.tag_suffix }}
+            ${{ vars.DOCKERHUB_REGISTRY }}/php:${{ matrix.version }}${{ steps.config.outputs.tag_suffix }}
+            ${{ vars.DOCKERHUB_REGISTRY }}/php:${{ steps.config.outputs.minor_version }}${{ steps.config.outputs.tag_suffix }}
+      - name: Images Info
+        run: |
+          docker images
+          docker run --rm ${{ vars.DOCKERHUB_REGISTRY }}/php:${{ matrix.version }}${{ steps.config.outputs.tag_suffix }} -m
