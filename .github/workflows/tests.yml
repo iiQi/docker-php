@@ -7,6 +7,7 @@ on:
 env:
   EXT_CONFIG: build/config/ext.yaml
   SUITE_CONFIG: build/config/suite.yaml
+  TEST_TAG: iiqi/php:test
 
 jobs:
   init:
@@ -92,4 +93,8 @@ jobs:
             FROM=${{ steps.config.outputs.from }}
 
           tags: |
-            iiqi/php:${{ matrix.version }}-${{ matrix.suite }}-${{ matrix.distro }}-${{ matrix.ext }}
+            ${{ env.TEST_TAG }}
+      - name: Images Info
+        run: |
+          docker images
+          docker run --rm ${{ env.TEST_TAG }} -m
