@@ -125,4 +125,7 @@ build(){
         | with( select(type == "!!str"); . = {"run": env(PKG_CMD) ,"name": .} | . = {"run":.run | sub("{}", parent.name)} )
         | .run
         ' "$packageConfig" | sh -e
+
+  # 清理缓存
+  clearCache
 }
