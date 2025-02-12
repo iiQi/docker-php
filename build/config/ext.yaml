@@ -23,14 +23,12 @@ gd:
   deps:
     debian:
       - libfreetype6-dev
-      - libpng-dev
       - libavif-dev
       - libjpeg-dev
       - libwebp-dev
     alpine:
       - freetype-dev
       - jpeg-dev
-      - libpng-dev
       - libwebp-dev
       - libavif-dev
 gettext:
@@ -87,10 +85,6 @@ swoole:
       - libbrotli-dev
       - libc-ares-dev
       - libssl-dev
-      - libpq-dev
-      - libsqlite3-dev
-      - libzstd-dev
-      - liburing-dev
     alpine:
       -
 
