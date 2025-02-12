@@ -14,11 +14,6 @@ installDeps() {
               "$@"
 }
 
-installPackage() {
-  [ -z "$*" ] || apk add --no-cache "$@"
-
-
-}
 
 clearDeps() {
   runDeps="$( \
@@ -30,8 +25,6 @@ clearDeps() {
 
   apk add --no-cache $runDeps
   apk del --no-network .build-deps
-#  apk add --no-cache \
-#          bash
 }
 
 clearCache() {
