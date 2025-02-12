@@ -130,6 +130,8 @@ jobs:
           platforms: ${{ vars.BUILD_PLATFORMS }}
           pull: true
           push: true
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
           build-args: |
             DISTRO=${{ matrix.distro }}
             SUITE=${{ matrix.suite }}
