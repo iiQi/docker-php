@@ -127,7 +127,7 @@ jobs:
         with:
           context: .
           file: Dockerfile
-          platforms: linux/amd64
+          platforms: ${{ vars.BUILD_PLATFORMS }}
           pull: true
           push: true
           build-args: |
