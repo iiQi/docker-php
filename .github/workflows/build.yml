@@ -79,14 +79,19 @@ jobs:
           echo from=$(getSuite | yq '.from.[env(DISTRO)]') >> $GITHUB_OUTPUT
           echo cmd=$(getSuite | yq '.cmd') >> $GITHUB_OUTPUT
           
-          tag_suffix=${SUITE:+-$SUITE}
-  
-          if [ "$DISTRO" != "debian" ]; then
-            tag_suffix=${tag_suffix}-${DISTRO}
-          fi
-          
-          echo tag_suffix=${tag_suffix} >> $GITHUB_OUTPUT
-          echo minor_version=${MINOR_VERSION} >> $GITHUB_OUTPUT
+          suffix=${DISTRO#debian}
+          suffix=${suffix:+-$suffix}
+
+          TAG_SUFFIX=${SUITE:+-$SUITE}${suffix}
+
+          export TAG_SUFFIX
+
+          echo tags=$(yq '[
+              .[] as $reg | [env(MINOR_VERSION), env(VERSION)][] as $ver
+              | "\($reg)/php:\($ver)" + env(TAG_SUFFIX)
+              ]
+              | join("\n")
+              ' <<< '["${{ vars.ALIYUNCS_REGISTRY }}", "${{ vars.DOCKERHUB_REGISTRY }}"]') >> $GITHUB_OUTPUT
           
           cp /usr/bin/yq ./
 
@@ -141,11 +146,10 @@ jobs:
             FROM=${{ steps.config.outputs.from }}
 
           tags: |
-            ${{ vars.ALIYUNCS_REGISTRY }}/php:${{ matrix.version }}${{ steps.config.outputs.tag_suffix }}
-            ${{ vars.ALIYUNCS_REGISTRY }}/php:${{ steps.config.outputs.minor_version }}${{ steps.config.outputs.tag_suffix }}
-            ${{ vars.DOCKERHUB_REGISTRY }}/php:${{ matrix.version }}${{ steps.config.outputs.tag_suffix }}
-            ${{ vars.DOCKERHUB_REGISTRY }}/php:${{ steps.config.outputs.minor_version }}${{ steps.config.outputs.tag_suffix }}
+            ${{ steps.config.outputs.tags }}
+
       - name: Image Info
         run: |
-          docker run --rm ${{ vars.DOCKERHUB_REGISTRY }}/php:${{ matrix.version }}${{ steps.config.outputs.tag_suffix }} -m
+          tag=$(echo "${{ steps.config.outputs.tags }}" | head -n 1)
+          docker run --rm $tag -m
           docker images
