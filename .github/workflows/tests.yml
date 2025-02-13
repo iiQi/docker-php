@@ -70,8 +70,8 @@ jobs:
 
           . build.sh
 
-          echo from=$(get_suite | yq '.from.[env(DISTRO)]') >> $GITHUB_OUTPUT
-          echo cmd=$(get_suite | yq '.cmd') >> $GITHUB_OUTPUT
+          echo from=$(getSuite | yq '.from.[env(DISTRO)]') >> $GITHUB_OUTPUT
+          echo cmd=$(getSuite | yq '.cmd') >> $GITHUB_OUTPUT
 
           cp /usr/bin/yq ./
       - name: Print Config

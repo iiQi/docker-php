@@ -12,20 +12,20 @@ MINOR_VERSION=${VERSION%.*}
 
 export DISTRO SUITE VERSION MAJOR_VERSION MINOR_VERSION PHP_EXT extConfig packageConfig
 
-get_suite() {
+getSuite() {
   $YQ '.default.[env(SUITE)] * .[env(MINOR_VERSION)].[env(SUITE)] * .[env(VERSION)].[env(SUITE)]' "$suiteConfig"
 }
 
-get_select_ext() {
+getSelectExt() {
   if [ -z "$PHP_EXT" ]; then
-    get_suite | $YQ '.ext'
+    getSuite | $YQ '.ext'
   else
     printf "%s" "$PHP_EXT" | $YQ 'split(",")'
   fi
 }
 
-get_ext() {
-  get_select_ext | $YQ '.
+getExt() {
+  getSelectExt | $YQ '.
     |= with_entries(
         with( .value; select(type == "!!str") | parent.key = . | . = {"name": .})
         | .key = .value.name
@@ -44,15 +44,15 @@ get_ext() {
   '
 }
 
-get_deps() {
-  get_ext | $YQ '
+getDeps() {
+  getExt | $YQ '
     [ .[] | select(has("deps")) | .deps.[env(DISTRO)][] ]
     | ([load(env(packageConfig)) | .[env(DISTRO)].build[]]) *+ .
     | unique | join(" ")
   '
 }
 
-install_ext() {
+installExt() {
   conf=$*
   eval "$(
     printf "%s" "$conf" | \
@@ -61,11 +61,12 @@ install_ext() {
                     | .arg = (.arg // "")
                     '
   )"
+  type=$(echo "$type" | sed -e 's/^./\U&/')
 
-  "install_ext_$type" "$name" "$arg" $option
+  "installExt${type}" "$name" "$arg" $option
 }
 
-install_ext_pecl() {
+installExtPecl() {
   name=$1
   arg=${2:-}
 
@@ -73,7 +74,7 @@ install_ext_pecl() {
   docker-php-ext-enable "$name"
 }
 
-install_ext_builtin() {
+installExtBuiltin() {
   name=$1
 
   shift
@@ -85,7 +86,7 @@ install_ext_builtin() {
   docker-php-ext-install "$name"
 }
 
-pkg_cmd() {
+pkgCmd() {
   case "$DISTRO" in
    debian )
      printf "apt-get install -y --no-install-recommends {}"
@@ -105,10 +106,10 @@ build(){
   savedMark="$(savedMark)"
 
   # 安装系统依赖
-  installDeps $(get_deps)
+  installDeps $(getDeps)
 
-  get_ext | $YQ '.[] | del(.deps) | @json' | while IFS= read -r line; do
-    install_ext "$line"
+  getExt | $YQ '.[] | del(.deps) | @json' | while IFS= read -r line; do
+    installExt "$line"
   done
 
   #清理pecl
@@ -121,7 +122,7 @@ build(){
   # 清理编译依赖
   clearDeps $savedMark
 
-  PKG_CMD=$(pkg_cmd) $YQ '.[env(DISTRO)].package[]
+  PKG_CMD=$(pkgCmd) $YQ '.[env(DISTRO)].package[]
         | with( select(type == "!!str"); . = {"run": env(PKG_CMD) ,"name": .} | . = {"run":.run | sub("{}", parent.name)} )
         | .run
         ' "$packageConfig" | sh -e
