@@ -63,8 +63,13 @@ jobs:
 
           export registry image
 
-          echo tags=$(yq '[ .[] | strenv(registry) + strenv(image) + ":" + . ] | @csv ' <<< "${{ matrix.tags }}") >> $GITHUB_OUTPUT
-          echo devTags=$(yq '[ .[] | strenv(registry) + strenv(image) + ":" + . ] | @csv ' <<< "${{ matrix.dev_tags }}") >> $GITHUB_OUTPUT
+          tags=$(yq '[ .[] | strenv(registry) + strenv(image) + ":" + . ] | @csv ' <<< "${{ matrix.tags }}")
+          devTags=$(yq '[ .[] | strenv(registry) + strenv(image) + ":" + . ] | @csv ' <<< "${{ matrix.dev_tags }}")
+          devBase=$(tr ',' '\n' <<< "$tags" | head -n 1)
+          
+          echo tags="$tags" >> $GITHUB_OUTPUT
+          echo devTags="devTags" >> $GITHUB_OUTPUT
+          echo devBase="devBase" >> $GITHUB_OUTPUT
           
           cp /usr/bin/yq ./
 
@@ -114,10 +119,28 @@ jobs:
           tags: |
             ${{ steps.config.outputs.tags }}
 
+      - name: Build Dev
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: Dockerfile-dev
+          platforms: ${{ vars.BUILD_PLATFORMS }}
+          pull: true
+          push: true
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+          build-args: |
+            DISTRO=${{ matrix.distro }}
+            SUITE=${{ matrix.suite }}
+            VERSION=${{ matrix.version }}
+            BASE=${{ steps.config.outputs.devBase }}
+
+          tags: |
+            ${{ steps.config.outputs.devTags }}
+
       - name: Image Info
         run: |
-          tag=$(echo "${{ steps.config.outputs.tags }}" | tr ',' '\n' | head -n 1)
-          docker run --rm $tag -m
+          docker run --rm ${{ steps.config.outputs.devBase }} -m
           docker images
 
   sync:
