@@ -61,7 +61,7 @@ installExt() {
                     | .arg = (.arg // "")
                     '
   )"
-  type=$(echo "$type" | sed -e 's/^./\U&/')
+  type=$(echo "$type" | awk '{ print toupper(substr($0,1,1)) tolower(substr($0,2)) }')
 
   "installExt${type}" "$name" "$arg" $option
 }
