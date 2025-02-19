@@ -11,11 +11,8 @@ registry=${registry:+$registry/}
 sync=${sync:-""}
 targetImage=${registry}${image:-''}
 
-text=$($YQ '.[] | @json' <<< "$sync")
-while IFS= read -r line; do
-  eval "$($YQ -oshell '.' <<< "$line")"
-
-  $YQ '.[]' <<< "${tags:-''}"  | while IFS= read -r tag; do
+syncImage() {
+  $YQ '.[]' <<< "$1"  | while IFS= read -r tag; do
     source=${registry:-''}/${image:-''}:${tag}
     target=${targetImage}:${tag}
 
@@ -23,5 +20,13 @@ while IFS= read -r line; do
 
     docker buildx imagetools create --tag "$target" "$source"
   done
+}
+
+text=$($YQ '.[] | @json' <<< "$sync")
+while IFS= read -r line; do
+  eval "$($YQ -oshell '.' <<< "$line")"
+
+  syncImage "${tags:-''}"
+  syncImage "${dev_tags:-''}"
 
 done <<< "$text"
