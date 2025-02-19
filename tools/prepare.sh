@@ -33,7 +33,7 @@ export buildRegistry versions
 
 buildConfig=$($YQ '
     [
-    ["debian"][] as $distro | (.default | keys())[] as $suite | env(versions)[] as $version
+    ["debian", "alpine"][] as $distro | (.default | keys())[] as $suite | env(versions)[] as $version
     | {"distro": $distro, "suite": $suite, "version": $version}
     ]
     | @json' "$SUITE_CONFIG")
