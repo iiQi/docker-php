@@ -108,8 +108,8 @@ jobs:
           platforms: ${{ vars.BUILD_PLATFORMS }}
           pull: true
           push: true
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
+          cache-from: type=gha,scope=${{ matrix.distro }}-${{ matrix.suite }}-${{ matrix.version }}
+          cache-to: type=gha,mode=max,scope=${{ matrix.distro }}-${{ matrix.suite }}-${{ matrix.version }}
           build-args: |
             DISTRO=${{ matrix.distro }}
             SUITE=${{ matrix.suite }}
@@ -129,8 +129,8 @@ jobs:
           platforms: ${{ vars.BUILD_PLATFORMS }}
           pull: true
           push: true
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
+          cache-from: type=gha,scope=${{ matrix.distro }}-${{ matrix.suite }}-${{ matrix.version }}-dev
+          cache-to: type=gha,mode=max,scope=${{ matrix.distro }}-${{ matrix.suite }}-${{ matrix.version }}-dev
           build-args: |
             DISTRO=${{ matrix.distro }}
             SUITE=${{ matrix.suite }}
