@@ -116,7 +116,7 @@ jobs:
 
       - name: Image Info
         run: |
-          tag=$(echo "${{ steps.config.outputs.tags }}" | head -n 1)
+          tag=$(echo "${{ steps.config.outputs.tags }}" | tr ',' '\n' | head -n 1)
           docker run --rm $tag -m
           docker images
 
