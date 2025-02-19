@@ -138,3 +138,13 @@ build(){
   # 清理缓存
   clearCache
 }
+
+buildDev(){
+  . "distro/$DISTRO.sh"
+
+  updateRepo
+
+  PKG_CMD=$(pkgCmd) getPackage "dev" | sh -e
+
+  clearCache
+}
