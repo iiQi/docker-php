@@ -75,5 +75,4 @@ done <<< "$text"
 
 export buildConfig
 
-syncConfig=$($YQ 'map(. |= . * {"sync": env(buildConfig)}) | @json' <<< "$syncRegistries")
-
+syncConfig=$($YQ 'map(. |= . * {"sync": ( env(buildConfig) | @json )}) | @json' <<< "$syncRegistries")
