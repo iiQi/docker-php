@@ -1,3 +1,16 @@
+default:
+  dev:
+    - run: |
+        composer config -g repo.packagist composer https://mirrors.aliyun.com/composer/
+    - run: |
+        curl -o /usr/local/bin/wait-for https://raw.githubusercontent.com/mrako/wait-for/master/wait-for
+        chmod +x /usr/local/bin/wait-for
+    - run: |
+        cat << EOF >> /root/.bashrc
+        export LESSCHARSET=utf-8
+        source /etc/profile
+        EOF
+
 debian:
   # 编译工具包
   build:
@@ -20,6 +33,13 @@ debian:
     - procps
     - telnet
     - traceroute
+    - run: |
+        cat << EOF > /etc/profile.d/git.sh
+        GIT_PS1_SHOWCOLORHINTS=true
+        GIT_PS1_SHOWUPSTREAM="verbose name legacy git"
+        PROMPT_COMMAND='__git_ps1 "[\u@\h \W]" "\\$ "'
+        EOF
+
 alpine:
   # 编译工具包
   build:
