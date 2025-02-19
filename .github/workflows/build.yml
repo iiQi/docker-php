@@ -40,8 +40,8 @@ jobs:
     needs:
       - prepare
     strategy:
-      matrix: ${{ fromJSON(needs.init.outputs.config) }}
-      max-parallel: 3
+      matrix:
+        include: ${{ fromJSON(needs.prepare.outputs.buildConfig) }}
       fail-fast: false
     steps:
       - name: Check out repository code
