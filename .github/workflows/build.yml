@@ -119,3 +119,39 @@ jobs:
           tag=$(echo "${{ steps.config.outputs.tags }}" | head -n 1)
           docker run --rm $tag -m
           docker images
+
+  sync:
+    name: Sync To ${{ matrix.registry }}
+    runs-on: "ubuntu-latest"
+    needs:
+      - prepare
+      - build
+    strategy:
+      matrix:
+        include: ${{ fromJSON(needs.prepare.outputs.syncConfig) }}
+      fail-fast: false
+
+    steps:
+      - name: Check out repository code
+        uses: actions/checkout@v3
+
+      - name: Set yq
+        uses: mikefarah/yq@master
+        with:
+          cmd: ''
+
+      - name: Docker login ${{ matrix.registry }}
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ matrix.registry }}
+          username: ${{ secrets[matrix.username] }}
+          password: ${{ secrets[matrix.password] }}
+
+      - name: Sync images
+        run: |
+          set -eux
+          registry='${{ matrix.registry }}'
+          image='${{ matrix.image }}'
+          sync='${{ matrix.sync }}'
+          
+          . tools/sync.sh
