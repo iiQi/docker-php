@@ -68,8 +68,8 @@ jobs:
           devBase=$(tr ',' '\n' <<< "$tags" | head -n 1)
           
           echo tags="$tags" >> $GITHUB_OUTPUT
-          echo devTags="devTags" >> $GITHUB_OUTPUT
-          echo devBase="devBase" >> $GITHUB_OUTPUT
+          echo devTags="$devTags" >> $GITHUB_OUTPUT
+          echo devBase="$devBase" >> $GITHUB_OUTPUT
           
           cp /usr/bin/yq ./
 
@@ -82,6 +82,8 @@ jobs:
           echo "cmd: ${{ matrix.cmd }}"
           echo "from: ${{ matrix.from }}"
           echo "tags: ${{ steps.config.outputs.tags }}"
+          echo "devTags: ${{ steps.config.outputs.devTags }}"
+          echo "devBase: ${{ steps.config.outputs.devBase }}"
 
       - name: Docker login Build Registry
         uses: docker/login-action@v3
