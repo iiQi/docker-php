@@ -97,6 +97,17 @@ pkgCmd() {
   esac
 }
 
+getPackage() {
+  PKG_TYPE=$1
+
+  export PKG_TYPE
+
+  $YQ '.[env(DISTRO)].[env(PKG_TYPE)] *+ .default.[env(PKG_TYPE)] | .[]
+        | with( select(type == "!!str"); . = {"run": env(PKG_CMD) ,"name": .} | . = {"run":.run | sub("{}", parent.name)} )
+        | .run
+        ' "$packageConfig"
+}
+
 build(){
   . "distro/$DISTRO.sh"
 
@@ -122,10 +133,7 @@ build(){
   # 清理编译依赖
   clearDeps $savedMark
 
-  PKG_CMD=$(pkgCmd) $YQ '.[env(DISTRO)].package[]
-        | with( select(type == "!!str"); . = {"run": env(PKG_CMD) ,"name": .} | . = {"run":.run | sub("{}", parent.name)} )
-        | .run
-        ' "$packageConfig" | sh -e
+  PKG_CMD=$(pkgCmd) getPackage "package" | sh -e
 
   # 清理缓存
   clearCache
