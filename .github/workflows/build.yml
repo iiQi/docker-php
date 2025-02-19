@@ -27,7 +27,7 @@ jobs:
       - name: Prepare
         id: prepare
         run: |
-          registries="${{ inputs.registries }}"
+          registries="${{ vars.registries }}"
 
           . tools/prepare.sh
 
