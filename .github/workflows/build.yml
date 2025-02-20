@@ -5,6 +5,12 @@ on:
     - cron: 0 6 * * 0
   push:
   workflow_dispatch:
+    inputs:
+      buildExclude:
+        description: '要排除的构建参数，格式：distro-suite-version。一行一个，支持正则表达式。'
+        default: ''
+        required: false
+        type: string
 
 env:
   EXT_CONFIG: build/config/ext.yaml
@@ -28,7 +34,8 @@ jobs:
         id: prepare
         run: |
           registries="${{ vars.REGISTRIES }}"
-          buildExclude="${{ vars.BUILD_EXCLUDE }}"
+          buildExclude="${{ inputs.buildExclude }}"
+          buildExclude=${buildExclude:-"${{ vars.BUILD_EXCLUDE }}"}
 
           . tools/prepare.sh
 
