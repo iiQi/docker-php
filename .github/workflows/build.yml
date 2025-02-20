@@ -13,9 +13,7 @@ on:
         type: string
 
 env:
-  EXT_CONFIG: build/config/ext.yaml
-  SUITE_CONFIG: build/config/suite.yaml
-  RUNTIME_CONFIG: build/config/runtime.yaml
+  RUNTIME_CONFIG: config/runtime.yaml
 
 jobs:
   prepare:
