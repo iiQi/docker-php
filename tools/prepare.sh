@@ -5,7 +5,7 @@ set -euxo pipefail
 YQ=${YQ:-"/usr/bin/yq"}
 SUITE_CONFIG=${SUITE_CONFIG:-"build/config/suite.yaml"}
 registries=${registries:-""}
-buildExclude=${buildExclude:-""}
+buildExclude=$($YQ 'select(length > 0) | sub(" ", "|")' <<< "${buildExclude:-""}")
 
 getSuite() {
   $YQ '.default.[env(SUITE)] * .[env(MINOR_VERSION)].[env(SUITE)] * .[env(VERSION)].[env(SUITE)]' "$SUITE_CONFIG"
@@ -37,7 +37,7 @@ buildConfig=$($YQ '
     ["debian", "alpine"][] as $distro | (.default | keys())[] as $suite | env(versions)[] as $version
     | {"distro": $distro, "suite": $suite, "version": $version}
     ]
-    | filter(.distro + "-" + .suite + "-" + .version | test(env(buildExclude) | sub(" ", "|")) == false)
+    | filter( (strenv(buildExclude) | length == 0 ) or ( .distro + "-" + .suite + "-" + .version | test(strenv(buildExclude)) | not ) )
     | @json' "$SUITE_CONFIG")
 
 text=$($YQ '.[] | @json' <<< "$buildConfig")
