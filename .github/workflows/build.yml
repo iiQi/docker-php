@@ -15,6 +15,7 @@ on:
 env:
   EXT_CONFIG: build/config/ext.yaml
   SUITE_CONFIG: build/config/suite.yaml
+  RUNTIME_CONFIG: build/config/runtime.yaml
 
 jobs:
   prepare:
@@ -79,6 +80,12 @@ jobs:
           echo devTags="$devTags" >> $GITHUB_OUTPUT
           echo devBase="$devBase" >> $GITHUB_OUTPUT
           
+          changeRepo="${{ vars.RUNTIME_CHANGE_REPO }}"
+          changeRepo=${changeRepo:-"after"}
+          
+          export changeRepo
+          yq '{"changeRepo": env(changeRepo)}' <<< '' > "${{ env.RUNTIME_CONFIG }}"
+
           cp /usr/bin/yq ./
 
       - name: Print Config
