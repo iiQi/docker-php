@@ -9,8 +9,6 @@ changeRepo() {
   elif [ -f /etc/apt/sources.list ]; then
     sed -i 's#http://deb.debian.org#https://mirrors.aliyun.com#g' /etc/apt/sources.list
   fi
-
-  updateRepo
 }
 
 updateRepo() {

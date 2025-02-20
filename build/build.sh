@@ -5,12 +5,22 @@ set -eux
 extConfig="config/ext.yaml"
 packageConfig="config/package.yaml"
 suiteConfig="config/suite.yaml"
+runtimeConfig="config/runtime.yaml"
 
 YQ=${YQ:-"./yq"}
 MAJOR_VERSION=${VERSION%%.*}
 MINOR_VERSION=${VERSION%.*}
 
 export DISTRO SUITE VERSION MAJOR_VERSION MINOR_VERSION PHP_EXT extConfig packageConfig
+
+runtimeConfig() {
+  key=$1
+
+  if [ -f "$runtimeConfig" ]; then
+    export key
+    $YQ '.[env(key)]' "$runtimeConfig"
+  fi
+}
 
 getSuite() {
   $YQ '.default.[env(SUITE)] * .[env(MINOR_VERSION)].[env(SUITE)] * .[env(VERSION)].[env(SUITE)]' "$suiteConfig"
@@ -111,8 +121,12 @@ getPackage() {
 build(){
   . "distro/$DISTRO.sh"
 
-  # 修改源
-  changeRepo
+  if [ "$(runtimeConfig 'changeRepo')" = "before" ]; then
+    changeRepo
+  fi
+
+  # 更新源
+  updateRepo
 
   savedMark="$(savedMark)"
 
@@ -137,6 +151,10 @@ build(){
 
   # 清理缓存
   clearCache
+
+  if [ "$(runtimeConfig 'changeRepo')" = "after" ]; then
+    changeRepo
+  fi
 }
 
 buildDev(){
