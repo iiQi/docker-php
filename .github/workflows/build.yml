@@ -27,7 +27,8 @@ jobs:
       - name: Prepare
         id: prepare
         run: |
-          registries="${{ vars.registries }}"
+          registries="${{ vars.REGISTRIES }}"
+          buildExclude="${{ vars.BUILD_EXCLUDE }}"
 
           . tools/prepare.sh
 
