@@ -151,10 +151,6 @@ build(){
 
   # 清理缓存
   clearCache
-
-  if [ "$(runtimeConfig 'changeRepo')" = "after" ]; then
-    changeRepo
-  fi
 }
 
 buildDev(){
@@ -165,4 +161,8 @@ buildDev(){
   PKG_CMD=$(pkgCmd) getPackage "dev" | sh -e
 
   clearCache
+
+  if [ "$(runtimeConfig 'changeRepo')" = "after" ]; then
+    changeRepo
+  fi
 }
