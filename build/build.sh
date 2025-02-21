@@ -14,11 +14,8 @@ MINOR_VERSION=${VERSION%.*}
 export DISTRO SUITE VERSION MAJOR_VERSION MINOR_VERSION PHP_EXT extConfig packageConfig
 
 runtimeConfig() {
-  key=$1
-
   if [ -f "$runtimeConfig" ]; then
-    export key
-    $YQ '.[env(key)]' "$runtimeConfig"
+    $YQ ".$1" "$runtimeConfig"
   fi
 }
 
@@ -121,7 +118,7 @@ getPackage() {
 build(){
   . "distro/$DISTRO.sh"
 
-  if [ "$(runtimeConfig 'changeRepo')" = "before" ]; then
+  if [ "$(runtimeConfig 'repo.change')" = "before" ]; then
     changeRepo
   fi
 
@@ -162,7 +159,7 @@ buildDev(){
 
   clearCache
 
-  if [ "$(runtimeConfig 'changeRepo')" = "after" ]; then
+  if [ "$(runtimeConfig 'repo.change')" = "after" ]; then
     changeRepo
   fi
 }

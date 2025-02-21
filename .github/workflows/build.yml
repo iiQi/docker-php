@@ -84,11 +84,11 @@ jobs:
           echo devTags="$devTags" >> $GITHUB_OUTPUT
           echo devBase="$devBase" >> $GITHUB_OUTPUT
           
-          changeRepo="${{ vars.RUNTIME_CHANGE_REPO }}"
-          changeRepo=${changeRepo:-"after"}
+          repoChange="${{ vars.RUNTIME_REPO_CHANGE }}"
+          repoChange=${repoChange:-"after"}
           
-          export changeRepo
-          yq '{"changeRepo": env(changeRepo)}' <<< '' > "${{ env.RUNTIME_CONFIG }}"
+          export repoChange
+          yq '.repo.change = env(repoChange)' <<< '' > "${{ env.RUNTIME_CONFIG }}"
 
           cp /usr/bin/yq ./
 
