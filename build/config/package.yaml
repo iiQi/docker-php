@@ -2,8 +2,10 @@ default:
   dev:
     - bash-completion
     - git
+    - nano
     - net-tools
     - traceroute
+    - wget
     - run: |
         composer config -g repo.packagist composer https://mirrors.aliyun.com/composer/
     - run: |
