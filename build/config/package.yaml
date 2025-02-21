@@ -1,4 +1,9 @@
 default:
+  package:
+    - run: |
+        shopt -s dotglob
+        cp -rf /root/* /home/www/
+        chown -R www:www /home/www
   dev:
     - bash-completion
     - git
@@ -16,6 +21,10 @@ default:
         export LESSCHARSET=utf-8
         source /etc/profile
         EOF
+    - run: |
+        shopt -s dotglob
+        cp -rf /root/* /home/www/
+        chown -R www:www /home/www
 
 debian:
   # 编译工具包
