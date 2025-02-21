@@ -16,7 +16,7 @@ registries=$(printf "registry,image,username,password\n%s" "$registries" | $YQ -
 buildRegistry=$($YQ '.[:1][] | @json' <<< "$registries")
 syncRegistries=$($YQ '.[1:] | @json' <<< "$registries")
 
-ver=$($YQ 'keys() | filter(.!= "default") |.[]' "$SUITE_CONFIG")
+ver=${phpVersions:-$($YQ 'keys() | filter(.!= "default") |.[]' "$SUITE_CONFIG")}
 versions='[]'
 while IFS= read -r line; do
   dot_count=$(grep -o "\." <<< "$line" | wc -l)

@@ -6,6 +6,11 @@ on:
   push:
   workflow_dispatch:
     inputs:
+      phpVersions:
+        description: '指定编译的PHP版本，一行一个。不填默认从配置文件获取。'
+        default: ''
+        required: false
+        type: string
       buildExclude:
         description: '要排除的构建参数，格式：distro-suite-version。一行一个，支持正则表达式。'
         default: ''
@@ -33,6 +38,7 @@ jobs:
         id: prepare
         run: |
           registries="${{ vars.REGISTRIES }}"
+          phpVersions="${{ inputs.phpVersions }}"
           buildExclude="${{ inputs.buildExclude }}"
           buildExclude=${buildExclude:-"${{ vars.BUILD_EXCLUDE }}"}
 
