@@ -138,7 +138,7 @@ build(){
   rm -rf /usr/local/lib/php/.channels/* /usr/local/lib/php/doc/* /usr/local/lib/php/test/* /tmp/pear
 
   groupadd -g 1000 www
-  useradd -g 1000 -u 1000 -b /var -s /bin/bash www
+  useradd -g 1000 -u 1000 -m -d /home/www -s /bin/bash www
   cp /usr/local/etc/php/php.ini-production /usr/local/etc/php/php.ini
 
   # 清理编译依赖
