@@ -21,4 +21,6 @@ RUN --mount=type=bind,target=/build,source=./build \
     . ./build.sh; \
     build
 
+WORKDIR /opt
+
 ENTRYPOINT ["entrypoint"]
