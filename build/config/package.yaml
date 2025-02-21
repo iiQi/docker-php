@@ -1,8 +1,7 @@
 default:
   package:
     - run: |
-        shopt -s dotglob
-        cp -rf /root/* /home/www/
+        cp -rf /root/. /home/www/
         chown -R www:www /home/www
   dev:
     - bash-completion
@@ -22,8 +21,7 @@ default:
         source /etc/profile
         EOF
     - run: |
-        shopt -s dotglob
-        cp -rf /root/* /home/www/
+        cp -rf /root/. /home/www/
         chown -R www:www /home/www
 
 debian:
