@@ -102,7 +102,7 @@ pkgCmd() {
      printf "apt-get install -y --no-install-recommends {}"
     ;;
    alpine )
-     printf "apk add --no-cache {}"
+     printf "apk add {}"
     ;;
   esac
 }

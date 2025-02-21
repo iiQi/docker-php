@@ -5,7 +5,7 @@ changeRepo() {
 }
 
 updateRepo() {
-  return
+  apk update
 }
 
 savedMark() {
@@ -32,5 +32,5 @@ clearDeps() {
 }
 
 clearCache() {
-  return
+  rm -rf /var/cache/apk/*
 }
