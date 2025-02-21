@@ -1,5 +1,9 @@
 default:
   dev:
+    - bash-completion
+    - git
+    - net-tools
+    - traceroute
     - run: |
         composer config -g repo.packagist composer https://mirrors.aliyun.com/composer/
     - run: |
@@ -23,16 +27,12 @@ debian:
 
   # 开发工具包
   dev:
-    - bash-completion
     - bind9
     - dnsutils
-    - git
     - iputils-ping
-    - net-tools
     - netcat-traditional
     - procps
     - telnet
-    - traceroute
     - run: |
         cat << EOF > /etc/profile.d/git.sh
         GIT_PS1_SHOWCOLORHINTS=true
@@ -59,12 +59,8 @@ alpine:
 
   # 开发工具包
   dev:
-    - bash-completion
     - bind
-    - git
     - inetutils-telnet
     - iputils
-    - net-tools
     - netcat-openbsd
     - procps-ng
-    - traceroute
