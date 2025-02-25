@@ -80,6 +80,8 @@ swoole:
       - libssl-dev
     alpine:
       -
+xdebug:
+  type: pecl
 zip:
   type: builtin
   deps:
