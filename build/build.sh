@@ -60,9 +60,8 @@ getDeps() {
 }
 
 installExt() {
-  conf=$*
   eval "$(
-    printf "%s" "$conf" | \
+    printf "%s" "$1" | \
     $YQ -o=shell 'del(.needs)
                     | .option = (.option | map("--" + . | @sh) | join(" ") // "")
                     | .arg = (.arg // "")
