@@ -17,6 +17,8 @@ default:
       - amqp
       - redis
       - msgpack
+    dev:
+    - xdebug
   swoole:
     from:
       debian: cli
@@ -38,6 +40,8 @@ default:
       - protobuf
       - name: swoole
         arg: yes\nyes\nyes\nyes\nyes\nyes\n
+    dev:
+      - xdebug
 "8.1":
 "8.2":
 "8.3":
