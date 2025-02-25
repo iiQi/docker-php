@@ -3,7 +3,6 @@ name: build
 on:
   schedule:
     - cron: 0 6 * * 0
-  push:
   workflow_dispatch:
     inputs:
       phpVersions:
