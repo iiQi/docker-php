@@ -82,6 +82,9 @@ swoole:
       -
 xdebug:
   type: pecl
+  deps:
+    alpine:
+      - linux-headers
 zip:
   type: builtin
   deps:
