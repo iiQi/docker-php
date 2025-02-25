@@ -16,8 +16,7 @@ replaceINI()
   fi
 
   grep -Eo '\$\{(TZ|PHP_|FPM_)[^\}]*\}' "$file" | while IFS= read -r line; do
-    IFS=':' read -r key val <<< "${line:2:-1}"
-    val=${!key:-$val}
+    eval "val=${line}"
 
     if [ -n "$val" ]; then
       sed -i "s#;*\([^\#]*\)$line#\1$val#g" "$file"
