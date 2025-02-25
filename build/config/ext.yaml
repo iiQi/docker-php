@@ -66,13 +66,6 @@ sockets:
   deps:
     alpine:
       - linux-headers
-zip:
-  type: builtin
-  deps:
-    debian:
-      - libzip-dev
-    alpine:
-      - libzip-dev
 swoole:
   type: pecl
   arg: yes\nyes\nyes\nyes\nyes\nyes\n
@@ -87,4 +80,10 @@ swoole:
       - libssl-dev
     alpine:
       -
-
+zip:
+  type: builtin
+  deps:
+    debian:
+      - libzip-dev
+    alpine:
+      - libzip-dev
