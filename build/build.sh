@@ -31,8 +31,8 @@ getSelectExt() {
   fi
 }
 
-getExt() {
-  getSelectExt | $YQ '.
+mergeExtNeeds() {
+  $YQ '.
     |= with_entries(
         with( .value; select(type == "!!str") | parent.key = . | . = {"name": .})
         | .key = .value.name
@@ -51,12 +51,28 @@ getExt() {
   '
 }
 
-getDeps() {
-  getExt | $YQ '
+getExt() {
+  getSelectExt | mergeExtNeeds
+}
+
+getDevExt() {
+  getSuite | $YQ '.dev' | mergeExtNeeds
+}
+
+mergeDeps() {
+  $YQ '
     [ .[] | select(has("deps")) | .deps.[env(DISTRO)][] ]
     | ([load(env(packageConfig)) | .[env(DISTRO)].build[]]) *+ .
     | unique | join(" ")
   '
+}
+
+getDeps() {
+  getExt | mergeDeps
+}
+
+getDevDeps() {
+  getDevExt | mergeDeps
 }
 
 installExt() {
@@ -153,6 +169,20 @@ buildDev(){
   . "distro/$DISTRO.sh"
 
   updateRepo
+
+  savedMark="$(savedMark)"
+
+  installDeps $(getDevDeps)
+
+  getDevExt | $YQ '.[] | del(.deps) | @json' | while IFS= read -r line; do
+    installExt "$line"
+  done
+
+  #清理pecl
+  rm -rf /usr/local/lib/php/.channels/* /usr/local/lib/php/doc/* /usr/local/lib/php/test/* /tmp/pear
+
+  # 清理编译依赖
+  clearDeps $savedMark
 
   PKG_CMD=$(pkgCmd) getPackage "dev" | sh -e
 
