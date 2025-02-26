@@ -11,7 +11,10 @@ default:
     - traceroute
     - wget
     - run: |
-        composer config -g repo.packagist composer https://mirrors.aliyun.com/composer/
+        composer config -g allow-plugins.slince/composer-registry-manager true
+        composer global require slince/composer-registry-manager
+        composer repo:use aliyun
+        composer clear-cache
     - run: |
         curl -o /usr/local/bin/wait-for https://raw.githubusercontent.com/mrako/wait-for/master/wait-for
         chmod +x /usr/local/bin/wait-for
