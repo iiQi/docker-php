@@ -19,6 +19,9 @@ on:
 env:
   RUNTIME_CONFIG: config/runtime.yaml
 
+permissions:
+  packages: write
+
 jobs:
   prepare:
     name: Prepare
