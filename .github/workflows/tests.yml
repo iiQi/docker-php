@@ -17,10 +17,6 @@ jobs:
     steps:
       - name: Check out repository code
         uses: actions/checkout@v3
-      - name: Set yq
-        uses: mikefarah/yq@master
-        with:
-          cmd: ''
       - name: Query Config
         id: query-config
         shell: bash
@@ -51,10 +47,6 @@ jobs:
     steps:
       - name: Check out repository code
         uses: actions/checkout@v3
-      - name: Set yq
-        uses: mikefarah/yq@master
-        with:
-          cmd: ''
       - name: Config
         id: config
         shell: bash
