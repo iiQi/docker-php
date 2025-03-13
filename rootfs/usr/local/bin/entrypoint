@@ -4,12 +4,11 @@ set -e
 REPLACE_INI_FILES=${REPLACE_INI_FILES:-"/usr/local/etc/php/conf.d/php.ini,/usr/local/etc/php-fpm.d/zz-www.conf"}
 
 if [ -f /root/crontab ]; then
-  crontab -  < /root/crontab
+  crontab - </root/crontab
   cron
 fi
 
-replaceINI()
-{
+replaceINI() {
   file=$1
   if [ ! -f "$file" ]; then
     return
@@ -25,11 +24,22 @@ replaceINI()
 }
 
 if [ -n "$REPLACE_INI_FILES" ]; then
-  IFS=',' read -r -a array <<< "$REPLACE_INI_FILES"
+  IFS=',' read -r -a array <<<"$REPLACE_INI_FILES"
   for item in "${array[@]}"; do
     replaceINI "$item"
   done
 fi
+
+env | grep -Eo '^PHP_EXT_.*=(enable|disable)' | while IFS="=" read -r ext status; do
+  ext=$(echo "${ext#PHP_EXT_}" | tr '[:upper:]' '[:lower:]')
+  ini="$PHP_INI_DIR/conf.d/docker-php-ext-$ext.ini"
+
+  if [ "enable" = "$status" ] && [ ! -f "$ini" ]; then
+    docker-php-ext-enable "$ext"
+  elif [ "disable" = "$status" ] && [ -f "$ini" ]; then
+    rm -f "$ini"
+  fi
+done
 
 if [ "${1#-}" != "$1" ] || [ "$1" = "" ]; then
   set -- "$PHP_CMD" "$@"
