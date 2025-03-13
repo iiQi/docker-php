@@ -41,7 +41,8 @@ default:
       - name: swoole
         arg: yes\nyes\nyes\nyes\nyes\nyes\n
     dev:
-      - xdebug
+      - name: xdebug
+        enable: no
 "8.1":
 "8.2":
 "8.3":
