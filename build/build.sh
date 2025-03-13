@@ -81,28 +81,30 @@ installExt() {
     $YQ -o=shell 'del(.needs)
                     | .option = (.option | map("--" + . | @sh) | join(" ") // "")
                     | .arg = (.arg // "")
+                    | .enable = (.enable // "yes")
                     '
   )"
   type=$(echo "$type" | awk '{ print toupper(substr($0,1,1)) tolower(substr($0,2)) }')
 
-  "installExt${type}" "$name" "$arg" $option
+  export option arg enable
+
+  "installExt${type}" "$name"
 }
 
 installExtPecl() {
   name=$1
-  arg=${2:-}
 
   printf "%b" "$arg" | pecl install "$name"
-  docker-php-ext-enable "$name"
+  if [ "yes" = "$enable" ]; then
+    docker-php-ext-enable "$name"
+  fi
 }
 
 installExtBuiltin() {
   name=$1
 
-  shift
-
   if [ -n "$*" ]; then
-    docker-php-ext-configure "$name" "$@"
+    docker-php-ext-configure "$name" $option
   fi
 
   docker-php-ext-install "$name"
