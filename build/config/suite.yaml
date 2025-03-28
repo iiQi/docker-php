@@ -34,6 +34,9 @@ default:
             EOF
             chmod +x /usr/local/bin/cron
 
+    # 套件专用开发包
+    dev-package:
+
   swoole:
     from:
       debian: cli
@@ -55,9 +58,18 @@ default:
       - protobuf
       - name: swoole
         arg: yes\nyes\nyes\nyes\nyes\nyes\n
+
+    # 开发扩展
     dev:
       - name: xdebug
         enable: no
+
+    # 套件专用软件包
+    package:
+
+    # 套件专用开发包
+    dev-package:
+
 "8.1":
 "8.2":
 "8.3":
