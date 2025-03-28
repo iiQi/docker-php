@@ -37,7 +37,9 @@ replaceINI() {
 if [ -n "$REPLACE_INI_FILES" ]; then
   IFS=',' read -r -a array <<<"$REPLACE_INI_FILES"
   for item in "${array[@]}"; do
-    replaceINI "$item"
+    for file in $item; do
+      replaceINI "$file"
+    done
   done
 fi
 
