@@ -2,10 +2,19 @@
 set -e
 
 REPLACE_INI_FILES=${REPLACE_INI_FILES:-"/usr/local/etc/php/conf.d/php.ini,/usr/local/etc/php-fpm.d/zz-www.conf"}
+CRON_FILE=${CRON_FILE:-"/var/spool/crontab"}
+CRON_USER=${CRON_USER:-"www"}
+CRON_FOREGROUND=${CRON_FOREGROUND:-"off"}
 
-if [ -f /root/crontab ]; then
-  crontab - </root/crontab
-  cron
+if [ -f "$CRON_FILE" ]; then
+  crontab -u "$CRON_USER" "$CRON_FILE"
+
+  # 前台模式
+  if [ "$CRON_FOREGROUND" = "on" ]; then
+    set -- cron -f "$@"
+  else
+    cron
+  fi
 fi
 
 replaceINI() {
