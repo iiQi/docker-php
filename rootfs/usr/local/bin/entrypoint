@@ -1,7 +1,9 @@
 #!/usr/bin/env bash
 set -e
 
-REPLACE_INI_FILES=${REPLACE_INI_FILES:-"/usr/local/etc/php/conf.d/php.ini,/usr/local/etc/php-fpm.d/zz-www.conf"}
+REPLACE_INI_FILES=${REPLACE_INI_FILES:+,$REPLACE_INI_FILES}
+REPLACE_INI_FILES="/usr/local/etc/php/conf.d/php.ini,/usr/local/etc/php-fpm.d/zz-www.conf${REPLACE_INI_FILES}"
+
 CRON_FILE=${CRON_FILE:-"/var/spool/crontab"}
 CRON_USER=${CRON_USER:-"www"}
 CRON_FOREGROUND=${CRON_FOREGROUND:-"off"}
