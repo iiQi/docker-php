@@ -17,8 +17,23 @@ default:
       - amqp
       - redis
       - msgpack
+
+    # 开发扩展
     dev:
-    - xdebug
+      - xdebug
+
+    # 套件专用软件包
+    package:
+      debian:
+        - cron
+      alpine:
+        - run: |
+            cat << EOF > /usr/local/bin/cron
+            #!/bin/sh
+            exec /usr/sbin/crond "$@"
+            EOF
+            chmod +x /usr/local/bin/cron
+
   swoole:
     from:
       debian: cli
