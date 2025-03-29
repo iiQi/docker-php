@@ -55,7 +55,7 @@ env | grep -Eo '^PHP_EXT_.*=(enable|disable)' | while IFS="=" read -r ext status
 done
 
 if [ "${1#-}" != "$1" ] || [ "$1" = "" ]; then
-  set -- "$PHP_CMD" "$@"
+  set -- "$EXEC_CMD" "$@"
 fi
 
 if [ -n "$ON_START" ]; then

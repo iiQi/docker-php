@@ -128,7 +128,7 @@ jobs:
             SUITE=${{ matrix.suite }}
             VERSION=${{ matrix.version }}
             PHP_EXT=${{ matrix.ext }}
-            PHP_CMD=${{ matrix.cmd }}
+            EXEC_CMD=${{ matrix.cmd }}
             FROM=${{ matrix.from }}
 
           tags: |

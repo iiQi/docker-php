@@ -7,10 +7,10 @@ ARG DISTRO=debian
 ARG SUITE
 ARG VERSION
 ARG PHP_EXT
-ARG PHP_CMD=php
+ARG EXEC_CMD=php
 
 ENV TZ=Asia/Shanghai \
-    PHP_CMD=${PHP_CMD}
+    EXEC_CMD=${EXEC_CMD}
 
 COPY --chmod=0755 rootfs/usr/local/bin /usr/local/bin
 COPY --chmod=0666 rootfs/usr/local/etc /usr/local/etc
