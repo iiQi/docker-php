@@ -56,8 +56,12 @@
 
 ### 其他
 
-| 环境变量                            | 说明                                                       |
-|---------------------------------|----------------------------------------------------------|
-| PHP_EXT_{NAME}=[enable\|disable] | 设置开启/关闭 PHP 扩展。如：`PHP_EXT_XDEBUG=enable` 为开启 `xdebug` 扩展 |
-| REPLACE_INI_FILES               | 可进行环境变量替换的文件名，多个文件用 `,` 分割                               |
-| ON_START                        | 启动前执行命令                                                  |
+| 环境变量                             | 默认值                | 说明                                                       |
+|----------------------------------|--------------------|----------------------------------------------------------|
+| PHP_EXT_{NAME}=[enable\|disable] |                    | 设置开启/关闭 PHP 扩展。如：`PHP_EXT_XDEBUG=enable` 为开启 `xdebug` 扩展 |
+| REPLACE_INI_FILES                |                    | 可进行环境变量替换的文件名，多个文件用 `,` 分割                               |
+| CRON_FILE                        | /var/spool/crontab | 计划任务初始化文件                                                |
+| CRON_USER                        | www                | 计划任务运行用户                                                 |
+| CRON_FOREGROUND                  | off                | 是否开启计划任务前端运行 [on\|off]，开启后不再启动 `PHP` 进程                  |
+| ON_START                         |                    | 启动前执行命令                                                  |
+| EXEC_CMD                         | suite.yaml 配置值     | 默认启动命令，`fmp` 套件为 `php-fpm`，`swoole` 套件为 `php`            |
