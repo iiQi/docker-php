@@ -77,8 +77,8 @@ getDevDeps() {
 
 installExt() {
   eval "$(
-    printf "%s" "$1" | \
-    $YQ -o=shell 'del(.needs)
+    printf "%s" "$1" |
+      $YQ -o=shell 'del(.needs)
                     | .option = (.option | map("--" + . | @sh) | join(" ") // "")
                     | .arg = (.arg // "")
                     | .enable = (.enable // "yes")
@@ -112,11 +112,11 @@ installExtBuiltin() {
 
 pkgCmd() {
   case "$DISTRO" in
-   debian )
-     printf "apt-get install -y --no-install-recommends {}"
+  debian)
+    printf "apt-get install -y --no-install-recommends {}"
     ;;
-   alpine )
-     printf "apk add {}"
+  alpine)
+    printf "apk add {}"
     ;;
   esac
 }
@@ -134,7 +134,7 @@ getPackage() {
         ' "$packageConfig"
 }
 
-build(){
+build() {
   . "distro/$DISTRO.sh"
 
   if [ "$(runtimeConfig 'repo.change')" = "before" ]; then
@@ -169,7 +169,7 @@ build(){
   clearCache
 }
 
-buildDev(){
+buildDev() {
   . "distro/$DISTRO.sh"
 
   updateRepo
