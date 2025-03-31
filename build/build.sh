@@ -130,6 +130,8 @@ getPackage() {
 
   $YQ '.[env(DISTRO)].[env(PKG_TYPE)] *+ .default.[env(PKG_TYPE)] *+ env(SUITE_PKG) | .[]
         | with( select(type == "!!str"); . = {"run": env(PKG_CMD) ,"name": .} | . = {"run":.run | sub("{}", parent.name)} )
+        | with( select(has("call") and (.call | test("[http|https]://"))); . = {"run": "curl " + .call })
+        | with( select(has("call")); . = {"run": "sh " + .call })
         | .run
         ' "$packageConfig"
 }
