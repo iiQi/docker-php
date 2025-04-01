@@ -23,4 +23,4 @@ RUN --mount=type=bind,target=/build,source=./build \
 
 WORKDIR /opt
 
-ENTRYPOINT ["entrypoint"]
+ENTRYPOINT ["/init"]

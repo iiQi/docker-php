@@ -1,6 +1,7 @@
 default:
   package:
     - run: |
+        ln -snf /usr/local/bin/entrypoint /init
         ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone 
         cp -rf /root/. /home/www/
         chown -R www:www /home/www
