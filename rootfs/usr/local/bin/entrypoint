@@ -14,6 +14,11 @@ if [ -f "$CRON_FILE" ]; then
   # 前台模式
   if [ "$CRON_FOREGROUND" = "on" ]; then
     set -- cron -f "$@"
+
+  # s6 任务管理模式
+  elif command -v s6-svc >/dev/null 2>&1; then
+    s6-svc -u /etc/s6/cron
+
   else
     cron
   fi
