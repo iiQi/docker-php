@@ -37,6 +37,55 @@ default:
     # 套件专用开发包
     dev-package:
 
+  fpm-nginx:
+    from:
+      debian: fpm
+      alpine: fpm-alpine
+    cmd: php-fpm
+    ext:
+      - gd
+      - bcmath
+      - curl
+      - gettext
+      - gmp
+      - pcntl
+      - pdo_mysql
+      - sockets
+      - zip
+      - amqp
+      - redis
+      - msgpack
+
+    # 开发扩展
+    dev:
+      - xdebug
+
+    # 套件专用软件包
+    package:
+      debian:
+        - cron
+        - s6
+        # openresty
+        - call: suite/fpm-nginx/debian/install-openresty.sh
+        - call: suite/fpm-nginx/config-openresty.sh
+        - call: suite/s6.sh
+      alpine:
+        - s6
+        # 统一计划任务程序名
+        - run: |
+            cat << 'EOF' > /usr/local/bin/cron
+            #!/bin/sh
+            exec /usr/sbin/crond "$@"
+            EOF
+            chmod +x /usr/local/bin/cron
+        # openresty
+        - call: suite/fpm-nginx/alpine/install-openresty.sh
+        - call: suite/fpm-nginx/config-openresty.sh
+        - call: suite/s6.sh
+
+    # 套件专用开发包
+    dev-package:
+
   swoole:
     from:
       debian: cli
