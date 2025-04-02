@@ -1,0 +1,6 @@
+#!/bin/bash
+if [ "${1#-}" != "$1" ] || [ "$1" = "" ]; then
+  set -- s6-svscan /etc/s6 "$@"
+fi
+
+exec "$@"
