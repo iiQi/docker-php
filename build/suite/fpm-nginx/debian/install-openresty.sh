@@ -15,3 +15,5 @@ chmod a+r /etc/apt/keyrings/openresty.asc
 echo "deb [signed-by=/etc/apt/keyrings/openresty.asc] $RESTY_APT_REPO $(. /etc/os-release && echo "$VERSION_CODENAME") openresty" | tee /etc/apt/sources.list.d/openresty.list
 apt-get update
 apt-get install -y --no-install-recommends openresty${RESTY_DEB_VERSION}
+
+rm -rf /etc/apt/keyrings/openresty.asc /etc/apt/sources.list.d/openresty.list
