@@ -28,7 +28,7 @@ default:
         - cron
       alpine:
         - run: |
-            cat << EOF > /usr/local/bin/cron
+            cat << 'EOF' > /usr/local/bin/cron
             #!/bin/sh
             exec /usr/sbin/crond "$@"
             EOF
