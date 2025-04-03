@@ -1,6 +1,62 @@
-# 介绍
+# 简介
 
 这是一个基于配置的 PHP docker 镜像生成器。
+
+## 默认套件
+
+### 1. fpm
+
+- 扩展
+    - gd
+    - bcmath
+    - curl
+    - gettext
+    - gmp
+    - pcntl
+    - pdo_mysql
+    - sockets
+    - zip
+    - amqp
+    - redis
+    - msgpack
+
+### 2. fpm-nginx
+
+实际上是 fpm + openresty 的组合，包含上面 `fpm` 的所有扩展。采用 `s6` 作为进程管理工具。
+
+### 3. swoole
+
+- 扩展
+    - gd
+    - bcmath
+    - curl
+    - gettext
+    - gmp
+    - pcntl
+    - pdo_mysql
+    - sockets
+    - zip
+    - amqp
+    - redis
+    - msgpack
+    - protobuf
+
+### 开发专用镜像
+
+- 扩展
+    - xdebug （`fpm` 默认开启，`swoole` 需要通过环境变量手动开启）
+
+- 工具
+    - composer
+    - slince/composer-registry-manager：仓库镜像管理工具（默认使用 aliyun 镜像）
+    - bash-completion
+    - git
+    - nano
+    - net-tools
+    - traceroute
+    - wget
+    - [wait-for](https://github.com/mrako/wait-for)：用于在自动化测试中等待容器中所有服务启动
+    - pause：kubernetes 暂停容器，用于开发时创建无启动容器，手工启动 swoole 进程
 
 # 镜像使用
 
