@@ -2,9 +2,13 @@
 
 这是一个基于配置的 PHP docker 镜像生成器。
 
-## 默认套件
+## 默认套件 <suite>
 
 ### 1. fpm
+
+- 镜像
+    - `php:<version>-fpm`：基于 debian 构建
+    - `php:<version>-fpm-alpine`：基于 alpine 构建
 
 - 扩展
     - gd
@@ -24,7 +28,14 @@
 
 实际上是 fpm + openresty 的组合，包含上面 `fpm` 的所有扩展。采用 `s6` 作为进程管理工具。
 
+- 镜像
+    - `php:<version>-fpm-nginx`：基于 debian 构建
+    - `php:<version>-fpm-nginx-alpine`：基于 alpine 构建
+
 ### 3. swoole
+- 镜像
+    - `php:<version>-swoole`：基于 debian 构建
+    - `php:<version>-swoole-alpine`：基于 alpine 构建
 
 - 扩展
     - gd
@@ -42,6 +53,9 @@
     - protobuf
 
 ### 开发专用镜像
+- 镜像
+    - `php:<version>-<suite>-dev`：基于 debian 构建
+    - `php:<version>-<suite>-dev-alpine`：基于 alpine 构建
 
 - 扩展
     - xdebug （`fpm` 默认开启，`swoole` 需要通过环境变量手动开启）
