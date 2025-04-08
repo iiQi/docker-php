@@ -94,7 +94,15 @@
 | PHP_SWOOLE_USE_SHORTNAME        | swoole.use_shortname        | off           |
 | PHP_ZEND_EXTENSION              | zend_extension              | opcache       |
 | PHP_OPCACHE_ENABLE              | opcache.enable              | 1             |
+| PHP_OPCACHE_ENABLE_CLI          | opcache.enable_cli          | 1             |
+| PHP_OPCACHE_BLACKLIST_FILENAME  | opcache.blacklist_filename  |               |
 | PHP_OPCACHE_VALIDATE_TIMESTAMPS | opcache.validate_timestamps | 0             |
+| PHP_OPCACHE_JIT                 | opcache.jit                 | 1235          |
+| PHP_OPCACHE_JIT_BUFFER_SIZE     | opcache.jit_buffer_size     | 64M           |
+| PHP_OPCACHE_JIT_DEBUG           | opcache.jit_debug           |               |
+| PHP_OPCACHE_JIT_HOT_FUNC        | opcache.jit_hot_func        |               |
+| PHP_OPCACHE_JIT_HOT_LOOP        | opcache.jit_hot_loop        |               |
+| PHP_OPCACHE_JIT_HOT_RETURN      | opcache.jit_hot_return      |               |
 | PHP_XDEBUG_MODE                 | xdebug.mode                 | develop,debug |
 | PHP_XDEBUG_START_WITH_REQUEST   | xdebug.start_with_request   | default       |
 | PHP_XDEBUG_CLIENT_HOST          | xdebug.client_host          | localhost     |
