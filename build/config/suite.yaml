@@ -23,6 +23,9 @@ default:
     dev:
       - xdebug
 
+    # 启动环境变量
+    env:
+
     # 套件专用软件包
     package:
       debian:
@@ -61,6 +64,11 @@ default:
     # 开发扩展
     dev:
       - xdebug
+
+    # 启动环境变量
+    env:
+      NGX_USER: www
+      FPM_LISTEN: /var/run/php-fpm.sock
 
     # 套件专用软件包
     package:

@@ -1,6 +1,10 @@
 #!/usr/bin/env bash
 set -e
 
+if [ -f "/etc/environment" ]; then
+  source "/etc/environment"
+fi
+
 REPLACE_INI_FILES=${REPLACE_INI_FILES:+,$REPLACE_INI_FILES}
 REPLACE_INI_FILES="/usr/local/etc/php/conf.d/php.ini,/usr/local/etc/php-fpm.d/zz-www.conf${REPLACE_INI_FILES}"
 
