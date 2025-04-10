@@ -13,5 +13,7 @@ echo "${RESTY_APK_REPO_URL}" >> /etc/apk/repositories
 apk update
 apk add "openresty${RESTY_APK_VERSION}"
 
+ln -snf /usr/local/openresty/nginx/conf /etc/openresty
+
 rm -rf "/etc/apk/keys/$(basename ${RESTY_APK_KEY_URL})"
 echo "${repo}" > /etc/apk/repositories
