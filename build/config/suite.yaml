@@ -10,6 +10,7 @@ default:
       - curl
       - gettext
       - gmp
+      - mysqli
       - pcntl
       - pdo_mysql
       - sockets
@@ -48,6 +49,7 @@ default:
       - curl
       - gettext
       - gmp
+      - mysqli
       - pcntl
       - pdo_mysql
       - sockets

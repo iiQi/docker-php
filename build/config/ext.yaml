@@ -45,6 +45,8 @@ gmp:
       - gmp-dev
 msgpack:
   type: pecl
+mysqli:
+  type: builtin
 pcntl:
   type: builtin
 pdo_mysql:
