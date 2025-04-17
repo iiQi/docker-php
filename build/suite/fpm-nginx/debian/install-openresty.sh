@@ -8,7 +8,7 @@ arch=${arch:+/$arch}
 
 RESTY_APT_REPO="https://openresty.org/package$arch/debian"
 RESTY_APT_PGP="https://openresty.org/package/pubkey.gpg"
-RESTY_DEB_VERSION="=1.25.3.2-1~bookworm1"
+RESTY_DEB_VERSION="=1.27.1.2-1~bookworm1"
 
 curl -o /etc/apt/keyrings/openresty.asc ${RESTY_APT_PGP}
 chmod a+r /etc/apt/keyrings/openresty.asc
