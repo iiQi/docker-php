@@ -6,6 +6,7 @@ extConfig="config/ext.yaml"
 packageConfig="config/package.yaml"
 suiteConfig="config/suite.yaml"
 runtimeConfig="config/runtime.yaml"
+envFile="/etc/environment"
 
 YQ=${YQ:-"./yq"}
 MAJOR_VERSION=${VERSION%%.*}
@@ -136,6 +137,21 @@ getPackage() {
         ' "$packageConfig"
 }
 
+buildEnvFile() {
+  export ENV_KEY="$1"
+
+  getSuite | $YQ '.[env(ENV_KEY) + "-env" | sub("env-", "")]
+            | with_entries(
+                with( select(.value | type == "!!str"); .value = "$" + "{" + .key + ":-" + .value + "}" )
+                | with( select(.value.cover); .value = .value.value)
+              )
+            | to_entries
+            | map( . = .key + "=" + .value )
+            | join("\n")
+            ' >> "$envFile"
+
+}
+
 build() {
   . "distro/$DISTRO.sh"
 
@@ -167,6 +183,8 @@ build() {
 
   PKG_CMD=$(pkgCmd) getPackage "package" | sh -e
 
+  buildEnvFile "env"
+
   # 清理缓存
   clearCache
 }
@@ -191,6 +209,8 @@ buildDev() {
   clearDeps $savedMark
 
   PKG_CMD=$(pkgCmd) getPackage "dev" | sh -e
+
+  buildEnvFile "dev"
 
   clearCache
 
