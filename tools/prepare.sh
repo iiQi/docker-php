@@ -64,12 +64,13 @@ while IFS= read -r line; do
   export FROM CMD TAG_SUFFIX DEV_SUFFIX
 
   line=$($YQ '
-      .major_version = (env(MAJOR_VERSION) | to_string)
-      | .minor_version = (env(MINOR_VERSION) | to_string)
+      [env(MINOR_VERSION), env(VERSION), env(VERSION)] as $tags
+      | .major_version = (strenv(MAJOR_VERSION))
+      | .minor_version = (strenv(MINOR_VERSION))
       | .from = env(FROM)
       | .cmd = env(CMD)
-      | .tags = ([ [env(MINOR_VERSION), env(VERSION)][] | . + env(TAG_SUFFIX) ] | @json)
-      | .dev_tags = ([ [env(MINOR_VERSION), env(VERSION)][] | . + env(DEV_SUFFIX) ] | @json)
+      | .tags = ([ $tags[] | . + env(TAG_SUFFIX) ] | @json)
+      | .dev_tags = ([ $tags[] | . + env(DEV_SUFFIX) ] | @json)
       | . * env(buildRegistry)
       ' <<< "$line")
 
