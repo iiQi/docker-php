@@ -76,15 +76,14 @@ default:
 
     # 套件专用软件包
     package:
-      debian:
-        - cron
+      default:
         - s6
-        # openresty
-        - call: suite/fpm-nginx/debian/install-openresty.sh
         - call: suite/fpm-nginx/config-openresty.sh
         - call: suite/s6.sh
+      debian:
+        - cron
+        - call: suite/fpm-nginx/debian/install-openresty.sh
       alpine:
-        - s6
         # 统一计划任务程序名
         - run: |
             cat << 'EOF' > /usr/local/bin/cron
@@ -92,10 +91,7 @@ default:
             exec /usr/sbin/crond "$@"
             EOF
             chmod +x /usr/local/bin/cron
-        # openresty
         - call: suite/fpm-nginx/alpine/install-openresty.sh
-        - call: suite/fpm-nginx/config-openresty.sh
-        - call: suite/s6.sh
 
     # 套件专用开发包
     dev-package:
