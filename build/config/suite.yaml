@@ -129,6 +129,27 @@ default:
     # 套件专用开发包
     dev-package:
 
+"8.0":
+  swoole:
+    ext:
+      - gd
+      - bcmath
+      - curl
+      - gettext
+      - gmp
+      - pcntl
+      - pdo_mysql
+      - sockets
+      - zip
+      - amqp
+      - redis
+      - msgpack
+      - name: protobuf
+        version: 3.25.6
+      - name: swoole
+        arg: yes\nyes\nyes\nyes\nyes\nyes\n
+        version: 5.1.7
+
 "8.1":
 "8.2":
 "8.3":
