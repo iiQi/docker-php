@@ -83,11 +83,13 @@ installExt() {
                     | .option = (.option | map("--" + . | @sh) | join(" ") // "")
                     | .arg = (.arg // "")
                     | .enable = (.enable // "yes")
+                    | with( select(has("version")); .version = "-" + .version)
+                    | .version = (.version // "")
                     '
   )"
   type=$(echo "$type" | awk '{ print toupper(substr($0,1,1)) tolower(substr($0,2)) }')
 
-  export option arg enable
+  export option arg enable version
 
   "installExt${type}" "$name"
 }
@@ -95,7 +97,7 @@ installExt() {
 installExtPecl() {
   name=$1
 
-  printf "%b" "$arg" | pecl install "$name"
+  printf "%b" "$arg" | pecl install "$name$version"
   if [ "yes" = "$enable" ]; then
     docker-php-ext-enable "$name"
   fi
