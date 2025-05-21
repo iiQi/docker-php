@@ -11,7 +11,7 @@ on:
         required: false
         type: string
       buildExclude:
-        description: '要排除的构建参数，格式：distro-suite-version。一行一个，支持正则表达式。'
+        description: '要排除的构建参数，格式：version-suite-distro。一行一个，支持正则表达式。'
         default: ''
         required: false
         type: string

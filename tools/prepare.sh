@@ -38,7 +38,7 @@ buildConfig=$($YQ '
     ["debian", "alpine"][] as $distro | (.default | keys())[] as $suite | env(versions)[] as $version
     | {"distro": $distro, "suite": $suite, "version": $version}
     ]
-    | filter( (strenv(buildExclude) | length == 0 ) or ( .distro + "-" + .suite + "-" + .version | test(strenv(buildExclude)) | not ) )
+    | filter( (strenv(buildExclude) | length == 0 ) or ( .version + "-" + .suite + "-" + .distro | test(strenv(buildExclude)) | not ) )
     | @json' "$SUITE_CONFIG")
 
 text=$($YQ '.[] | @json' <<< "$buildConfig")
