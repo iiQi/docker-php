@@ -129,6 +129,37 @@ default:
     # 套件专用开发包
     dev-package:
 
+"7.4":
+  fpm:
+    dev:
+      - name: xdebug
+        version: 3.1.6
+
+  fpm-nginx:
+    dev:
+      - name: xdebug
+        version: 3.1.6
+
+  swoole:
+    ext:
+      - gd
+      - bcmath
+      - curl
+      - gettext
+      - gmp
+      - pcntl
+      - pdo_mysql
+      - sockets
+      - zip
+      - amqp
+      - redis
+      - msgpack
+      - name: protobuf
+        version: 3.24.4
+      - name: swoole
+        arg: yes\nyes\nyes\nyes\nyes\nyes\n
+        version: 4.8.13
+
 "8.0":
   swoole:
     ext:
