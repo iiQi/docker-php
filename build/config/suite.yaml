@@ -161,6 +161,12 @@ default:
         arg: yes\nyes\nyes\nyes\nyes\nyes\n
         version: 4.8.13
 
+    # 开发扩展
+    dev:
+      - name: xdebug
+        enable: no
+        version: 3.1.6
+
 "8.0":
   disable: true
   swoole:
