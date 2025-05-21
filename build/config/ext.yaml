@@ -81,7 +81,7 @@ swoole:
       - libc-ares-dev
       - libssl-dev
     alpine:
-      -
+      - c-ares-dev
 xdebug:
   type: pecl
   deps:
