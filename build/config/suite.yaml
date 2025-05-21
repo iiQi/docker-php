@@ -130,6 +130,7 @@ default:
     dev-package:
 
 "7.4":
+  disable: true
   fpm:
     dev:
       - name: xdebug
@@ -161,6 +162,7 @@ default:
         version: 4.8.13
 
 "8.0":
+  disable: true
   swoole:
     ext:
       - gd
