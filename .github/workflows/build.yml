@@ -1,5 +1,3 @@
-name: build
-
 on:
   schedule:
     - cron: 0 6 * * 0
@@ -15,6 +13,8 @@ on:
         default: ''
         required: false
         type: string
+
+name: build ${{ inputs.phpVersions || 'default'  }}
 
 env:
   RUNTIME_CONFIG: config/runtime.yaml
