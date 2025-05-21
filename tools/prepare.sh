@@ -16,7 +16,7 @@ registries=$(printf "registry,image,username,password\n%s" "$registries" | $YQ -
 buildRegistry=$($YQ '.[:1][] | @json' <<< "$registries")
 syncRegistries=$($YQ '.[1:] | @json' <<< "$registries")
 
-ver=${phpVersions:-$($YQ 'keys() | filter(.!= "default") |.[]' "$SUITE_CONFIG")}
+ver=${phpVersions:-$($YQ 'to_entries | filter(.value.disable != true) | from_entries | keys() | filter(.!= "default") | .[]' "$SUITE_CONFIG")}
 ver=$(echo "$ver" | tr ',' '\n')
 versions='[]'
 while IFS= read -r line; do
