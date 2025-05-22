@@ -133,7 +133,11 @@ default:
   disable: true
   fpm:
     ext:
-      - gd
+      - name: gd
+        option:
+          - with-freetype-dir
+          - with-jpeg-dir
+          - with-webp-dir
       - bcmath
       - curl
       - gettext
@@ -155,7 +159,11 @@ default:
 
   fpm-nginx:
     ext:
-      - gd
+      - name: gd
+        option:
+          - with-freetype-dir
+          - with-jpeg-dir
+          - with-webp-dir
       - bcmath
       - curl
       - gettext
@@ -177,7 +185,11 @@ default:
 
   swoole:
     ext:
-      - gd
+      - name: gd
+        option:
+          - with-freetype-dir
+          - with-jpeg-dir
+          - with-webp-dir
       - bcmath
       - curl
       - gettext
