@@ -132,11 +132,45 @@ default:
 "7.3":
   disable: true
   fpm:
+    ext:
+      - gd
+      - bcmath
+      - curl
+      - gettext
+      - gmp
+      - mysqli
+      - pcntl
+      - pdo_mysql
+      - sockets
+      - zip
+      - name: amqp
+        version: 1.11.0
+      - name: redis
+        version: 6.0.2
+      - msgpack
+
     dev:
       - name: xdebug
         version: 3.1.6
 
   fpm-nginx:
+    ext:
+      - gd
+      - bcmath
+      - curl
+      - gettext
+      - gmp
+      - mysqli
+      - pcntl
+      - pdo_mysql
+      - sockets
+      - zip
+      - name: amqp
+        version: 1.11.0
+      - name: redis
+        version: 6.0.2
+      - msgpack
+
     dev:
       - name: xdebug
         version: 3.1.6
