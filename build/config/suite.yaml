@@ -198,8 +198,10 @@ default:
       - pdo_mysql
       - sockets
       - zip
-      - amqp
-      - redis
+      - name: amqp
+        version: 1.11.0
+      - name: redis
+        version: 6.0.2
       - msgpack
       - name: protobuf
         version: 3.24.4
