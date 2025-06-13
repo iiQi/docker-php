@@ -48,7 +48,7 @@ jobs:
           echo syncConfig="$syncConfig" >> $GITHUB_OUTPUT
 
   build:
-    name: Build PHP ${{ matrix.version }}-${{ matrix.suite }}-${{ matrix.distro }}
+    name: Build ${{ matrix.version }}-${{ matrix.suite }}-${{ matrix.distro }}
     runs-on: "ubuntu-latest"
     needs:
       - prepare
