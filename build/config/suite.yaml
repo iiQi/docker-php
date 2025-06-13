@@ -44,7 +44,7 @@ default:
   fpm-nginx:
     from:
       debian: fpm
-      alpine: fpm-alpine
+      alpine: fpm-alpine3.21
     cmd: php-fpm
     ext:
       - gd
@@ -158,6 +158,9 @@ default:
         version: 3.1.6
 
   fpm-nginx:
+    from:
+      debian: fpm
+      alpine: fpm-alpine
     ext:
       - name: gd
         option:
@@ -223,6 +226,10 @@ default:
         version: 3.1.6
 
   fpm-nginx:
+    from:
+      debian: fpm
+      alpine: fpm-alpine
+
     dev:
       - name: xdebug
         version: 3.1.6
@@ -255,6 +262,12 @@ default:
 
 "8.0":
   disable: true
+
+  fpm-nginx:
+    from:
+      debian: fpm
+      alpine: fpm-alpine
+
   swoole:
     ext:
       - gd
