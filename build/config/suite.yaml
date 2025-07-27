@@ -26,6 +26,11 @@ default:
     # 启动环境变量
     env:
 
+    # 开发包启动环境变量
+    dev-env:
+      PHP_OPCACHE_ENABLE: 0
+      PHP_OPCACHE_ENABLE_CLI: 0
+
     # 套件专用软件包
     package:
       debian:
@@ -73,6 +78,8 @@ default:
     # 开发包启动环境变量
     dev-env:
       NGX_WORKER_PROCESSES: 1
+      PHP_OPCACHE_ENABLE: 0
+      PHP_OPCACHE_ENABLE_CLI: 0
 
     # 套件专用软件包
     package:
@@ -122,6 +129,11 @@ default:
     dev:
       - name: xdebug
         enable: no
+
+    # 开发包启动环境变量
+    dev-env:
+      PHP_OPCACHE_ENABLE: 0
+      PHP_OPCACHE_ENABLE_CLI: 0
 
     # 套件专用软件包
     package:

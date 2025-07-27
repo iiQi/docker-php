@@ -12,8 +12,7 @@ ARG VERSION
 COPY --from=composer /usr/bin/composer /usr/bin/composer
 COPY --from=pause /pause /usr/local/bin/pause
 
-ENV PHP_OPCACHE_ENABLE=0 \
-    FPM_PM_MAX_CHILDREN=10 \
+ENV FPM_PM_MAX_CHILDREN=10 \
     FPM_PM_START_SERVERS=1 \
     FPM_PM_MIN_SPARE_SERVERS=1 \
     FPM_PM_MAX_SPARE_SERVERS=5
