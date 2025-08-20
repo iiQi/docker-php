@@ -1,6 +1,6 @@
 ARG BASE=php
 
-FROM composer:lts AS composer
+FROM composer:2.8.10 AS composer
 FROM k8s.gcr.io/pause:3.10 AS pause
 
 FROM ${BASE}
