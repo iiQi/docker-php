@@ -48,7 +48,7 @@ default:
 
   fpm-nginx:
     from:
-      debian: fpm
+      debian: fpm-bookworm
       alpine: fpm-alpine3.21
     cmd: php-fpm
     ext:
