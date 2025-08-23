@@ -1,8 +1,10 @@
 default:
   package:
     - run: |
-        chmod 0666 /usr/local/etc/php/conf.d/php.ini
-        chmod 0666 /usr/local/etc/php-fpm.d/zz-www.conf
+        chmod +w /usr/local/etc/php/conf.d/
+        chmod +w /usr/local/etc/php-fpm.d/
+        chmod +w /usr/local/etc/php/conf.d/php.ini
+        chmod +w /usr/local/etc/php-fpm.d/zz-www.conf
         
         ln -snf /usr/local/bin/entrypoint /init
         ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone 
