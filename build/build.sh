@@ -184,7 +184,7 @@ build() {
   # 清理编译依赖
   clearDeps $savedMark
 
-  PKG_CMD=$(pkgCmd) getPackage "package" | sh -e
+  PKG_CMD=$(pkgCmd) getPackage "package" | sh -eux
 
   buildEnvFile "env"
 
