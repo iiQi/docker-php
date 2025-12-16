@@ -301,6 +301,8 @@ default:
         version: 5.1.7
 
 "8.1":
+  disable: true
+
 "8.2":
 "8.3":
 "8.4":
