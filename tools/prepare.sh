@@ -64,7 +64,7 @@ while IFS= read -r line; do
   export FROM CMD TAG_SUFFIX DEV_SUFFIX
 
   line=$($YQ '
-      [env(MINOR_VERSION), env(VERSION), env(VERSION)] as $tags
+      [env(MINOR_VERSION), env(VERSION)] as $tags
       | .major_version = (strenv(MAJOR_VERSION))
       | .minor_version = (strenv(MINOR_VERSION))
       | .from = env(FROM)
