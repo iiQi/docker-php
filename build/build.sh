@@ -12,6 +12,7 @@ YQ=${YQ:-"./yq"}
 MAJOR_VERSION=${VERSION%%.*}
 MINOR_VERSION=${VERSION%.*}
 
+$YQ -V
 export DISTRO SUITE VERSION MAJOR_VERSION MINOR_VERSION PHP_EXT extConfig packageConfig
 
 runtimeConfig() {
