@@ -8,7 +8,8 @@ registries=${registries:-""}
 buildExclude=$($YQ 'select(length > 0) | sub(" ", "|")' <<< "${buildExclude:-""}")
 
 getSuite() {
-  $YQ '.default.[env(SUITE)] * .[env(MINOR_VERSION)].[env(SUITE)] * .[env(VERSION)].[env(SUITE)]' "$SUITE_CONFIG"
+  # default.fpm + "8.4".fpm + "8.4.6".fpm
+  $YQ '.default.[env(SUITE)] * (.[env(MINOR_VERSION)].[env(SUITE)] // {}) * (.[env(VERSION)].[env(SUITE)] // {})' "$SUITE_CONFIG"
 }
 
 registries=$(printf "registry,image,username,password\n%s" "$registries" | $YQ -p csv '@json')
