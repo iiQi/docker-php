@@ -130,7 +130,7 @@ getPackage() {
   PKG_TYPE=$1
   export PKG_TYPE
 
-  SUITE_PKG=$(getSuite | $YQ '.[env(PKG_TYPE) + "-package" | sub("package-", "")] | .[env(DISTRO)] *+ .default')
+  SUITE_PKG=$(getSuite | $YQ '(.[env(PKG_TYPE) + "-package" | sub("package-", "")] | .[env(DISTRO)] // []) *+ (.default // [])')
   export SUITE_PKG
 
   $YQ '.[env(DISTRO)].[env(PKG_TYPE)] *+ .default.[env(PKG_TYPE)] *+ env(SUITE_PKG) | .[]
