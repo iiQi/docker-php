@@ -130,7 +130,7 @@ getPackage() {
   PKG_TYPE=$1
   export PKG_TYPE
 
-  SUITE_PKG=$(getSuite | $YQ '(.[env(PKG_TYPE) + "-package" | sub("package-", "")] | .[env(DISTRO)] // []) *+ (.default // [])')
+  SUITE_PKG=$(getSuite | $YQ '.[env(PKG_TYPE) + "-package" | sub("package-", "")] | (.[env(DISTRO)] // []) *+ (.default // [])')
   export SUITE_PKG
 
   $YQ '.[env(DISTRO)].[env(PKG_TYPE)] *+ .default.[env(PKG_TYPE)] *+ env(SUITE_PKG) | .[]
@@ -185,7 +185,7 @@ build() {
   # 清理编译依赖
   clearDeps $savedMark
 
-  PKG_CMD=$(pkgCmd) getPackage "package" | sh -eux
+  PKG_CMD="$(pkgCmd)" getPackage "package" | sh -eux
 
   buildEnvFile "env"
 
@@ -212,7 +212,7 @@ buildDev() {
   # 清理编译依赖
   clearDeps $savedMark
 
-  PKG_CMD=$(pkgCmd) getPackage "dev" | sh -e
+  PKG_CMD="$(pkgCmd)" getPackage "dev" | sh -e
 
   buildEnvFile "dev"
 
