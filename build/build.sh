@@ -146,11 +146,12 @@ buildEnvFile() {
 
   getSuite | $YQ '.[env(ENV_KEY) + "-env" | sub("env-", "")]
             | with_entries(
-                with( select(.value | type == "!!str"); .value = "$" + "{" + .key + ":-" + .value + "}" )
+              with( select(.value | type != "!!map"); .value = "$" + "{" + .key + ":-\"" + .value + "\"}" )
                 | with( select(.value.cover); .value = .value.value)
               )
             | to_entries
-            | map( . = .key + "=" + .value )
+            | filter(.value | type == "!!str")
+            | map( . = "export " + .key + "=" + .value )
             | join("\n")
             ' >> "$envFile"
 
