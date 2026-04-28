@@ -36,7 +36,10 @@ export buildExclude buildRegistry versions
 
 buildConfig=$($YQ '
     [
-    ["debian", "alpine"][] as $distro | (.default | keys())[] as $suite | env(versions)[] as $version
+    ["debian", "alpine"][] as $distro
+    | (.default | keys())[] as $suite
+    | env(versions)[] as $version
+
     | {"distro": $distro, "suite": $suite, "version": $version}
     ]
     | filter( (strenv(buildExclude) | length == 0 ) or ( .version + "-" + .suite + "-" + .distro | test(strenv(buildExclude)) | not ) )
