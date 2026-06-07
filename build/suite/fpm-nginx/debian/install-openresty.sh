@@ -10,7 +10,7 @@ arch=${arch:+/$arch}
 
 RESTY_APT_REPO="https://openresty.org/package$arch/debian"
 RESTY_APT_PGP="https://openresty.org/package/pubkey.gpg"
-RESTY_DEB_VERSION="=1.27.1.2-1~${VERSION_CODENAME}1"
+RESTY_DEB_VERSION="=1.31.1.1-1~${VERSION_CODENAME}1"
 
 # bookworm
 if [ "$VERSION_CODENAME" = "bookworm" ]; then
