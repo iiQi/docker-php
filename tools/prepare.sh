@@ -53,8 +53,9 @@ while IFS= read -r line; do
 
   MAJOR_VERSION=${VERSION%%.*}
   MINOR_VERSION=${VERSION%.*}
+  BUILD_VERSION="${VERSION}.${ciVersion:-0}"
 
-  export DISTRO SUITE VERSION MAJOR_VERSION MINOR_VERSION
+  export DISTRO SUITE VERSION MAJOR_VERSION MINOR_VERSION BUILD_VERSION
 
   FROM=$(getSuite | $YQ '.from.[env(DISTRO)]')
   CMD=$(getSuite | $YQ '.cmd')
@@ -68,7 +69,7 @@ while IFS= read -r line; do
   export FROM CMD TAG_SUFFIX DEV_SUFFIX
 
   line=$($YQ '
-      [env(MINOR_VERSION), env(VERSION)] as $tags
+      [env(MINOR_VERSION), env(VERSION), env(BUILD_VERSION)] as $tags
       | .major_version = (strenv(MAJOR_VERSION))
       | .minor_version = (strenv(MINOR_VERSION))
       | .from = env(FROM)

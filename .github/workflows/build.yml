@@ -41,6 +41,7 @@ jobs:
           phpVersions="${{ inputs.phpVersions }}"
           buildExclude="${{ inputs.buildExclude }}"
           buildExclude=${buildExclude:-"${{ vars.BUILD_EXCLUDE }}"}
+          ciVersion=${GITHUB_RUN_NUMBER:-0}
 
           . tools/prepare.sh
 
