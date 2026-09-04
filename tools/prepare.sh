@@ -58,6 +58,12 @@ while IFS= read -r line; do
   export DISTRO SUITE VERSION MAJOR_VERSION MINOR_VERSION BUILD_VERSION
 
   FROM=$(getSuite | $YQ '.from.[env(DISTRO)]')
+
+  # 基础镜像（from）为空时，跳过该套件在此发行版下的构建
+  if [ -z "$FROM" ] || [ "$FROM" = "null" ]; then
+    continue
+  fi
+
   CMD=$(getSuite | $YQ '.cmd')
 
   suffix=${DISTRO#debian}
