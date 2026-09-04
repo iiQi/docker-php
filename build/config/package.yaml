@@ -23,9 +23,10 @@ default:
           x86_64) suffix=x86_64 ;;
           aarch64) suffix=aarch_64 ;;
         esac
-        curl -Lo protoc.zip "https://github.com/protocolbuffers/protobuf/releases/download/v36.1/protoc-36.1-linux-${suffix}.zip"
-        unzip -o protoc.zip -d /usr/local/
-        rm -f protoc.zip
+        file=/usr/src/protoc.zip
+        curl -Lo "$file" "https://github.com/protocolbuffers/protobuf/releases/download/v36.1/protoc-36.1-linux-${suffix}.zip"
+        unzip -o "$file" -d /usr/local/
+        rm -f "$file"
     - run: |
         composer config -g allow-plugins.slince/composer-registry-manager true
         composer global require slince/composer-registry-manager
