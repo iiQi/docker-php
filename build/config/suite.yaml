@@ -15,7 +15,6 @@ default:
       - pdo_mysql
       - sockets
       - zip
-      - amqp
       - redis
       - msgpack
 
@@ -62,7 +61,6 @@ default:
       - pdo_mysql
       - sockets
       - zip
-      - amqp
       - redis
       - msgpack
 
@@ -118,7 +116,6 @@ default:
       - pdo_mysql
       - sockets
       - zip
-      - amqp
       - redis
       - msgpack
       - protobuf
@@ -259,7 +256,6 @@ default:
       - pdo_mysql
       - sockets
       - zip
-      - amqp
       - redis
       - msgpack
       - name: protobuf
@@ -293,7 +289,6 @@ default:
       - pdo_mysql
       - sockets
       - zip
-      - amqp
       - redis
       - msgpack
       - name: protobuf
