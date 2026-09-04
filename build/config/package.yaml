@@ -18,6 +18,15 @@ default:
     - traceroute
     - wget
     - run: |
+        arch=$(uname -m)
+        case "$arch" in
+          x86_64) suffix=x86_64 ;;
+          aarch64) suffix=aarch_64 ;;
+        esac
+        curl -Lo protoc.zip "https://github.com/protocolbuffers/protobuf/releases/download/v36.1/protoc-36.1-linux-${suffix}.zip"
+        unzip -o protoc.zip -d /usr/local/
+        rm -f protoc.zip
+    - run: |
         composer config -g allow-plugins.slince/composer-registry-manager true
         composer global require slince/composer-registry-manager
         composer clear-cache
