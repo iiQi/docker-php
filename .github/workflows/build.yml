@@ -117,13 +117,14 @@ jobs:
           buildkitd-flags: --debug
 
       - name: Build
-        uses: docker/build-push-action@v6
+        uses: docker/build-push-action@v7
         with:
           context: .
           file: Dockerfile
           platforms: ${{ vars.BUILD_PLATFORMS }}
           pull: true
           push: true
+          provenance: false
           cache-from: type=gha,scope=${{ matrix.distro }}-${{ matrix.suite }}-${{ matrix.version }}
           cache-to: type=gha,mode=max,scope=${{ matrix.distro }}-${{ matrix.suite }}-${{ matrix.version }}
           build-args: |
@@ -138,13 +139,14 @@ jobs:
             ${{ steps.config.outputs.tags }}
 
       - name: Build Dev
-        uses: docker/build-push-action@v6
+        uses: docker/build-push-action@v7
         with:
           context: .
           file: Dockerfile-dev
           platforms: ${{ vars.BUILD_PLATFORMS }}
           pull: true
           push: true
+          provenance: false
           cache-from: type=gha,scope=${{ matrix.distro }}-${{ matrix.suite }}-${{ matrix.version }}-dev
           cache-to: type=gha,mode=max,scope=${{ matrix.distro }}-${{ matrix.suite }}-${{ matrix.version }}-dev
           build-args: |
