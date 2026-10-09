@@ -72,6 +72,60 @@
     - [wait-for](https://github.com/mrako/wait-for)：用于在自动化测试中等待容器中所有服务启动
     - pause：kubernetes 暂停容器，用于开发时创建无启动容器，手工启动 swoole 进程
 
+# 构建自定义套件
+
+手动运行 **Build** workflow 时，可在 `suites` 中填写自定义套件名称，例如
+`foo` 或 `foo,foo-bar`。填写后只构建指定套件；留空（包括定时构建）时，仍使用
+`build/config/suite.yaml` 中的默认套件。
+
+## 名称和仓库变量
+
+套件名称会去除两端空白、转为小写并去重，必须以字母开头，且只允许字母、数字和连字符。
+多个名称以英文逗号分隔，空项会被忽略，但整个列表不能只有空白或逗号。
+变量名为 `SUITE_` 加上名称的大写形式，并将连字符 `-` 替换为下划线 `_`：
+
+| `suites` 输入 | 实际套件名 | 仓库变量 |
+|---|---|---|
+| `foo` 或 `Foo` | `foo` | `SUITE_FOO` |
+| `foo-bar` | `foo-bar` | `SUITE_FOO_BAR` |
+
+在仓库 **Settings → Secrets and variables → Actions → Variables** 中创建变量。
+例如，`SUITE_FOO` 的内容为：
+
+```yaml
+from:
+  debian: cli
+  alpine: cli-alpine
+cmd: php
+ext:
+  - redis
+dev:
+  - xdebug
+```
+
+变量内容对应单个套件的配置块，**不要再包一层 `foo:` 或 `default:`**。
+必须是单个 YAML 文档，根节点为 mapping；`from` 至少包含一个有效的
+`debian` 或 `alpine` 非空字符串，`cmd` 必须为非空字符串。
+不构建的发行版可以省略或设置为 `null` / 空字符串。
+其余字段（如 `env`、`dev-env`、`package`、`dev-package`）与原套件配置格式一致。
+
+自定义套件的全部配置来自仓库变量，**不会合并 `suite.yaml` 中同名套件的版本覆盖**。
+未填写 `phpVersions` 时，仅沿用该文件中的版本列表和 `disable` 设置；
+填写时使用指定版本。`buildExclude` 仍然有效；过滤后没有任何构建任务会明确报错。
+
+仓库变量不是密钥存储，请勿在套件配置中放置密码或令牌。
+
+## 本地回归测试
+
+使用 Mike Farah yq v4 运行：
+
+```bash
+YQ=/path/to/yq bash tests/prepare-suites.sh
+```
+
+测试不访问 PHP API，不构建或推送镜像。相关文件变更时也会触发
+`Prepare config tests` workflow。
+
 # 镜像使用
 
 ## 仓库地址

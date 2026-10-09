@@ -23,7 +23,7 @@ runtimeConfig() {
 
 getSuite() {
   # default.fpm + "8.4".fpm + "8.4.6".fpm
-  $YQ '.default.[env(SUITE)] * (.[env(MINOR_VERSION)].[env(SUITE)] // {}) * (.[env(VERSION)].[env(SUITE)] // {})' "$suiteConfig"
+  $YQ '.default.[strenv(SUITE)] * (.[strenv(MINOR_VERSION)].[strenv(SUITE)] // {}) * (.[strenv(VERSION)].[strenv(SUITE)] // {})' "$suiteConfig"
 }
 
 getSelectExt() {

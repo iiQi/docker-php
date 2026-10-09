@@ -15,6 +15,11 @@ on:
         default: ''
         required: false
         type: string
+      suites:
+        description: '自定义套件名称，多个以,分隔。名称转大写、-转_后读取 vars.SUITE_<名称>；填写后仅构建这些套件。'
+        default: ''
+        required: false
+        type: string
 
 run-name: build ${{ inputs.phpVersions || 'default'  }}
 
@@ -31,22 +36,40 @@ jobs:
     outputs:
       buildConfig: ${{ steps.prepare.outputs.buildConfig }}
       syncConfig: ${{ steps.prepare.outputs.syncConfig }}
+      suiteConfig: ${{ steps.prepare.outputs.suiteConfig }}
     steps:
       - name: Check out repository code
         uses: actions/checkout@v7
       - name: Prepare
         id: prepare
+        env:
+          REGISTRIES: ${{ vars.REGISTRIES }}
+          PHP_VERSIONS: ${{ inputs.phpVersions }}
+          BUILD_EXCLUDE: ${{ inputs.buildExclude || vars.BUILD_EXCLUDE }}
+          SUITES: ${{ inputs.suites }}
+          SUITE_VARS: ${{ toJSON(vars) }}
         run: |
-          registries="${{ vars.REGISTRIES }}"
-          phpVersions="${{ inputs.phpVersions }}"
-          buildExclude="${{ inputs.buildExclude }}"
-          buildExclude=${buildExclude:-"${{ vars.BUILD_EXCLUDE }}"}
+          registries="$REGISTRIES"
+          phpVersions="$PHP_VERSIONS"
+          buildExclude="$BUILD_EXCLUDE"
+          suites="$SUITES"
           ciVersion=${GITHUB_RUN_NUMBER:-0}
 
+          suiteConfigFile=''
+          trap 'if [ -n "$suiteConfigFile" ]; then rm -f -- "$suiteConfigFile"; fi' EXIT
           . tools/prepare.sh
 
-          echo buildConfig="$buildConfig" >> $GITHUB_OUTPUT
-          echo syncConfig="$syncConfig" >> $GITHUB_OUTPUT
+          echo buildConfig="$buildConfig" >> "$GITHUB_OUTPUT"
+          echo syncConfig="$syncConfig" >> "$GITHUB_OUTPUT"
+
+          # 自定义套件模式：输出 prepare 阶段生成好的完整 suite.yaml，供构建阶段写回
+          if [ -n "$customSuites" ]; then
+            {
+              echo 'suiteConfig<<__SUITE_CONFIG__'
+              cat "$SUITE_CONFIG"
+              echo '__SUITE_CONFIG__'
+            } >> "$GITHUB_OUTPUT"
+          fi
 
   build:
     name: Build ${{ matrix.version }}-${{ matrix.suite }}-${{ matrix.distro }}
@@ -65,41 +88,55 @@ jobs:
         id: config
         shell: bash
         working-directory: build
+        env:
+          SUITE_CONFIG_CONTENT: ${{ needs.prepare.outputs.suiteConfig }}
+          REGISTRY: ${{ matrix.registry }}
+          IMAGE: ${{ matrix.image }}
+          MATRIX_TAGS: ${{ matrix.tags }}
+          MATRIX_DEV_TAGS: ${{ matrix.dev_tags }}
+          REPO_CHANGE: ${{ vars.RUNTIME_REPO_CHANGE }}
         run: |
-          registry="${{ matrix.registry }}"
+          # 自定义套件模式：写回 prepare 阶段生成好的 suite.yaml
+          if [ -n "$SUITE_CONFIG_CONTENT" ]; then
+            printf '%s' "$SUITE_CONFIG_CONTENT" > config/suite.yaml
+          fi
+
+          registry="$REGISTRY"
           registry=${registry#docker.io}
           registry=${registry:+$registry/}
-          image="${{ matrix.image }}"
+          image="$IMAGE"
 
           export registry image
 
-          tags=$(yq '[ .[] | strenv(registry) + strenv(image) + ":" + . ] | @csv ' <<< "${{ matrix.tags }}")
-          devTags=$(yq '[ .[] | strenv(registry) + strenv(image) + ":" + . ] | @csv ' <<< "${{ matrix.dev_tags }}")
+          tags=$(yq '[ .[] | strenv(registry) + strenv(image) + ":" + . ] | @csv ' <<< "$MATRIX_TAGS")
+          devTags=$(yq '[ .[] | strenv(registry) + strenv(image) + ":" + . ] | @csv ' <<< "$MATRIX_DEV_TAGS")
           devBase=$(tr ',' '\n' <<< "$tags" | head -n 1)
           
-          echo tags="$tags" >> $GITHUB_OUTPUT
-          echo devTags="$devTags" >> $GITHUB_OUTPUT
-          echo devBase="$devBase" >> $GITHUB_OUTPUT
+          echo tags="$tags" >> "$GITHUB_OUTPUT"
+          echo devTags="$devTags" >> "$GITHUB_OUTPUT"
+          echo devBase="$devBase" >> "$GITHUB_OUTPUT"
           
-          repoChange="${{ vars.RUNTIME_REPO_CHANGE }}"
-          repoChange=${repoChange:-"after"}
+          repoChange=${REPO_CHANGE:-"after"}
           
           export repoChange
-          yq '.repo.change = env(repoChange)' <<< '' > "${{ env.RUNTIME_CONFIG }}"
+          yq '.repo.change = strenv(repoChange)' <<< '' > "$RUNTIME_CONFIG"
 
           cp /usr/bin/yq ./
 
       - name: Print Config
         shell: bash
+        env:
+          DISTRO: ${{ matrix.distro }}
+          SUITE: ${{ matrix.suite }}
+          VERSION: ${{ matrix.version }}
+          CMD: ${{ matrix.cmd }}
+          FROM: ${{ matrix.from }}
+          TAGS: ${{ steps.config.outputs.tags }}
+          DEV_TAGS: ${{ steps.config.outputs.devTags }}
+          DEV_BASE: ${{ steps.config.outputs.devBase }}
         run: |
-          echo "distro: ${{ matrix.distro }}"
-          echo "suite: ${{ matrix.suite }}"
-          echo "version: ${{ matrix.version }}"
-          echo "cmd: ${{ matrix.cmd }}"
-          echo "from: ${{ matrix.from }}"
-          echo "tags: ${{ steps.config.outputs.tags }}"
-          echo "devTags: ${{ steps.config.outputs.devTags }}"
-          echo "devBase: ${{ steps.config.outputs.devBase }}"
+          printf '%s\n' "distro: $DISTRO" "suite: $SUITE" "version: $VERSION" \
+            "cmd: $CMD" "from: $FROM" "tags: $TAGS" "devTags: $DEV_TAGS" "devBase: $DEV_BASE"
 
       - name: Docker login Build Registry
         uses: docker/login-action@v3
@@ -159,8 +196,10 @@ jobs:
             ${{ steps.config.outputs.devTags }}
 
       - name: Image Info
+        env:
+          DEV_BASE: ${{ steps.config.outputs.devBase }}
         run: |
-          docker run --rm ${{ steps.config.outputs.devBase }} -m
+          docker run --rm "$DEV_BASE" -m
           docker images
 
   sync:
@@ -186,10 +225,10 @@ jobs:
           password: ${{ secrets[matrix.password] }}
 
       - name: Sync images
+        env:
+          registry: ${{ matrix.registry }}
+          image: ${{ matrix.image }}
+          sync: ${{ matrix.sync }}
         run: |
           set -eux
-          registry='${{ matrix.registry }}'
-          image='${{ matrix.image }}'
-          sync='${{ matrix.sync }}'
-          
           . tools/sync.sh
